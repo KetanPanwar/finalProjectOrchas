@@ -28,7 +28,7 @@ ridecol = mydb["rides"]
 
 
 connection = pika.BlockingConnection(
-	pika.ConnectionParameters(host='localhost'))
+	pika.ConnectionParameters(host='rmq'))
 channel = connection.channel()
 
 if m=='0':

@@ -33,7 +33,7 @@ class forWrite(object):
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='localhost'))
+			pika.ConnectionParameters(host='rmq'))
 
 		self.channel = self.connection.channel()
 
