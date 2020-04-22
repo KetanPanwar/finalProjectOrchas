@@ -50,3 +50,6 @@ services:
   rmq:
     image: rabbitmq:3.8.3-alpine
     command: rabbitmqctl start_app
+    ports:
+      - 5672:5672
+      - 15672:15672
