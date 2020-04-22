@@ -1,0 +1,52 @@
+version: "3"
+services:
+  orchas:
+    container_name: orchas
+    restart: on-failure
+    image: orchas:latest
+    ports:
+      - 80:5000
+    env:
+      - TEAM_NAME=CC_0195_0309
+  master:
+    container_name: master
+    restart: on-failure
+    image: master:latest
+    ports:
+      - 8001:5001
+    env:
+      - TEAM_NAME=CC_0195_0309
+    links:
+      - orchas
+      - rmq      
+    depends_on:
+      - master_db
+      - rmq
+  slave:
+    container_name: slave
+    restart: on-failure
+    image: slave:latest
+    ports:
+      - 8002:5002
+    env:
+      - TEAM_NAME=CC_0195_0309
+    links:
+      - orchas
+      - rmq      
+    depends_on:
+      - slave_db
+      - rmq
+  master_db:
+    container_name: master_db
+    image: mongo
+    env:
+      - TEAM_NAME=CC_0195_0309
+
+  slave_db:
+    container_name: slave_db
+    image: mongo
+    env:
+      - TEAM_NAME=CC_0195_0309
+  rmq:
+    image: rabbitmq:3.8.3-alpine
+    command: rabbitmqctl start_app
