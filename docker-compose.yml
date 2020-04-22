@@ -6,7 +6,7 @@ services:
     image: orchas:latest
     ports:
       - 80:5000
-    env:
+    environment:
       - TEAM_NAME=CC_0195_0309
   master:
     container_name: master
@@ -14,7 +14,7 @@ services:
     image: master:latest
     ports:
       - 8001:5001
-    env:
+    environment:
       - TEAM_NAME=CC_0195_0309
     links:
       - orchas
@@ -28,7 +28,7 @@ services:
     image: slave:latest
     ports:
       - 8002:5002
-    env:
+    environment:
       - TEAM_NAME=CC_0195_0309
     links:
       - orchas
@@ -39,13 +39,13 @@ services:
   master_db:
     container_name: master_db
     image: mongo
-    env:
+    environment:
       - TEAM_NAME=CC_0195_0309
 
   slave_db:
     container_name: slave_db
     image: mongo
-    env:
+    environment:
       - TEAM_NAME=CC_0195_0309
   rmq:
     image: rabbitmq:3.8.3-alpine
