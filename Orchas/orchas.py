@@ -129,7 +129,7 @@ def updateinfo():
 			# 	cm, )
 			# d = json.loads(resp_send.content)
 			# d=json.loads(d)
-			print("cid",)
+			print("cid",container_pid)
 			# container_pid = int(container_pid) 
 			running_containers_info.append( [str(container_pid),str(container_id),str(container_name)])
 	running_containers_info.sort()
