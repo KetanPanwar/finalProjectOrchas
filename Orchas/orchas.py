@@ -144,7 +144,7 @@ def updateinfo():
 def launch():
 	global salveno,client
 	salveno+=1
-	client.containers.run("slave:latest", name='slavespaw'+str(salveno), detach=True,links={'slave_db':'slave_db'})
+	client.containers.run("slave:latest", name='slavespaw'+str(salveno),network='finalprojectorchas_default', detach=True,links={'slave_db':'slave_db'})
 	client.containers.get('slavespaw'+str(salveno)).exec_run("python3 slave.py 1", detach=True)
 	print ("Succesfully launched a container")
 	updateinfo()
