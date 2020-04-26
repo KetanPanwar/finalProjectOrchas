@@ -120,7 +120,7 @@ def updateinfo():
 	for i in running_containers:
 		container_id = i.id 
 		container_name = i.name
-		if 'salvespaw' in container_name:
+		if 'slavespaw' in container_name:
 			stream = os.popen( "sudo docker inspect --format '{{.State.Pid}}'" +'"'+ str(container_id)+'"') 
 			container_pid = stream.read()
 			print("cid",container_pid)
@@ -134,8 +134,8 @@ def updateinfo():
 def launch():
 	global salveno,client
 	salveno+=1
-	client.containers.run("slave:latest", name='salvespaw'+str(salveno), detach=True)
-	client.containers.get('salvespaw'+str(salveno)).exec_run("python3 slave.py 1", detach=True)
+	client.containers.run("slave:latest", name='slavespaw'+str(salveno), detach=True)
+	client.containers.get('slavespaw'+str(salveno)).exec_run("python3 slave.py 1", detach=True)
 	print ("Succesfully launched a container")
 	updateinfo()
 	return
@@ -347,10 +347,12 @@ def timeout():
 	coureadsprev=coureads
 	auto_start(totalerq)
 	auto_stop(totalerq)
+	print("reached fn")
 	fn()
+	print("fn called")
 
 def fn():
-	t = Timer(120.0, timeout)
+	t = Timer(60.0, timeout)
 	t.start()              
 
 flag=0
