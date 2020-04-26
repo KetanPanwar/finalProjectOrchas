@@ -121,9 +121,14 @@ def updateinfo():
 		container_id = i.id 
 		container_name = i.name
 		if 'slavespaw' in container_name:
-			stream = os.popen( "docker inspect --format '{{.State.Pid}}'" +'"'+ str(container_id)+'"') 
-			container_pid = stream.read()
-			print("cid",container_pid)
+			# stream = os.popen( "docker inspect --format '{{.State.Pid}}'" +'"'+ str(container_id)+'"') 
+			# container_pid = stream.read()
+			cm='/v1.24/containers/'+container_id+'/json?State=1 HTTP/1.1'
+			resp_send = requests.get(
+				cm, )
+			d = json.loads(resp_send.content)
+			d=json.loads(d)
+			print("cid",d)
 			# container_pid = int(container_pid) 
 			running_containers_info.append( [str(container_pid),str(container_id),str(container_name)])
 	running_containers_info.sort()
@@ -352,7 +357,7 @@ def timeout():
 	print("fn called")
 
 def fn():
-	t = Timer(60.0, timeout)
+	t = Timer(30.0, timeout)
 	t.start()              
 
 flag=0
