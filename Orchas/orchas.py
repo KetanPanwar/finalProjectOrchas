@@ -121,15 +121,15 @@ def updateinfo():
 		container_id = i.id 
 		container_name = i.name
 		if 'slavespaw' in container_name:
-			# stream = os.popen( "docker inspect --format '{{.State.Pid}}'" +'"'+ str(container_id)+'"') 
+			# stream = os.popen( "sudo docker inspect --format '{{.State.Pid}}'" +'"'+ str(container_id)+'"') 
 			# container_pid = stream.read()
 			print("yes")
-			cm='GET /v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1'
-			resp_send = requests.get(
-				cm, )
-			d = json.loads(resp_send.content)
-			d=json.loads(d)
-			print("cid",d,cm)
+			# cm='GET /v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1'
+			# resp_send = requests.get(
+			# 	cm, )
+			# d = json.loads(resp_send.content)
+			# d=json.loads(d)
+			print("cid",d)
 			# container_pid = int(container_pid) 
 			running_containers_info.append( [str(container_pid),str(container_id),str(container_name)])
 	running_containers_info.sort()
@@ -443,6 +443,6 @@ def clear_data():
 if __name__ == '__main__':
 
 	app.debug = True
-	app.run('0.0.0.0', port=5000)
+	app.run('0.0.0.0', port=80)
 	# http_server = WSGIServer(("",5000),app)
 	http_server.serve_forever()
