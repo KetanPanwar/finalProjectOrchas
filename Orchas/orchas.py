@@ -124,7 +124,7 @@ def updateinfo():
 			stream = os.popen( "sudo docker inspect --format '{{.State.Pid}}'" +'"'+ str(container_id)+'"') 
 			container_pid = stream.read()
 			print("cid",container_pid)
-			container_pid = int(container_pid) 
+			# container_pid = int(container_pid) 
 			running_containers_info.append( [str(container_pid),str(container_id),str(container_name)])
 	running_containers_info.sort()
 
