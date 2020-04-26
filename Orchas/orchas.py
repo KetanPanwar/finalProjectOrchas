@@ -118,10 +118,10 @@ def updateinfo():
 	running_containers_info=[]
 	running_containers = client.containers.list() 
 	for i in running_containers:
-		container_id = i.short_id 
+		container_id = i.id 
 		container_name = i.name
 		if 'slavespaw' in container_name:
-			stream = os.popen( "sudo docker inspect --format '{{.State.Pid}} '" +str(container_id)) 
+			stream = os.popen( "sudo docker inspect --format '{{.State.Pid}} '" +str(container_id)[:12]) 
 			container_pid = stream.read()
 			print("yes")
 			# cm='GET /v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1'
