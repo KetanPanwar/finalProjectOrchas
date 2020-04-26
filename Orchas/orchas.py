@@ -125,6 +125,7 @@ def updateinfo():
 			print("cm",cm)
 			stream = os.popen(cm) 
 			container_pid = stream.read()
+			container_pid=container_pid[:-2]
 			print("yes")
 			# cm='GET /v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1'
 			# resp_send = requests.get(
@@ -132,7 +133,7 @@ def updateinfo():
 			# d = json.loads(resp_send.content)
 			# d=json.loads(d)
 			print("cid",container_pid)
-			# container_pid = int(container_pid) 
+			container_pid = int(container_pid) 
 			running_containers_info.append( [str(container_pid),str(container_id),str(container_name)])
 	running_containers_info.sort()
 	print("rci",running_containers_info)
