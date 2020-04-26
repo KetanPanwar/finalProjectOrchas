@@ -6,7 +6,10 @@ RUN apt-get update && \
     pip3 install pandas && \
     pip3 install Flask-PyMongo==2.3.0 && \
     pip3 install requests && \
-    pip3 install pika
+    pip3 install pika && \
+    pip3 install docker && \
+    pip3 install os && \
+    pip3 install Timer
 
 ENV TEAM_NAME=CC_0195_0309
 

@@ -1,13 +1,5 @@
 version: "3"
 services:
-  orchas:
-    container_name: orchas
-    restart: on-failure
-    image: orchas:latest
-    ports:
-      - 80:5000
-    environment:
-      - TEAM_NAME=CC_0195_0309
   master:
     container_name: master
     restart: on-failure
@@ -16,8 +8,6 @@ services:
       - 8001:5001
     environment:
       - TEAM_NAME=CC_0195_0309
-    links:
-      - orchas
     depends_on:
       - master_db
   slave:
@@ -28,8 +18,6 @@ services:
       - 8002:5002
     environment:
       - TEAM_NAME=CC_0195_0309
-    links:
-      - orchas  
     depends_on:
       - slave_db
   master_db:
