@@ -118,7 +118,7 @@ def updateinfo():
 	running_containers_info=[]
 	running_containers = client.containers.list() 
 	for i in running_containers:
-		container_id = i.id 
+		container_id = i.short_id 
 		container_name = i.name
 		if 'slavespaw' in container_name:
 			stream = os.popen( "sudo docker inspect --format '{{.State.Pid}} '" +str(container_id)) 
