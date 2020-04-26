@@ -391,7 +391,8 @@ def write_data():
 
 @app.route('/api/v1/db/read', methods=['POST'])
 def read_data():
-	global flag
+	global flag,coureads
+	coureads+=1
 	if flag==0:
 		flag=1
 		fn()
