@@ -362,7 +362,7 @@ def timeout():
 	print("fn called")
 
 def fn():
-	t = Timer(30.0, timeout)
+	t = Timer(120.0, timeout)
 	t.start()              
 
 flag=0
