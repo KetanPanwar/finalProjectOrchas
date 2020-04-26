@@ -341,6 +341,7 @@ def auto_start(c):
 
 
 def timeout():
+	global coureads,coureadsprev
 	totalerq=coureads-coureadsprev
 	coureadsprev=coureads
 	auto_start(totalerq)
