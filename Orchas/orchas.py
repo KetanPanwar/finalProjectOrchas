@@ -121,7 +121,7 @@ def updateinfo():
 		container_id = i.id 
 		container_name = i.name
 		if 'slavespaw' in container_name:
-			stream = os.popen( "sudo docker inspect --format '{{.State.Pid}}'" +'"'+ str(container_id)+'"') 
+			stream = os.popen( "sudo docker inspect --format '{{.State.Pid}} '" +str(container_id)) 
 			container_pid = stream.read()
 			print("yes")
 			# cm='GET /v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1'
