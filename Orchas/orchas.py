@@ -124,7 +124,7 @@ def updateinfo():
 			# stream = os.popen( "docker inspect --format '{{.State.Pid}}'" +'"'+ str(container_id)+'"') 
 			# container_pid = stream.read()
 			print("yes")
-			cm='/v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1'
+			cm='/v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1?'
 			resp_send = requests.get(
 				cm, )
 			d = json.loads(resp_send.content)
