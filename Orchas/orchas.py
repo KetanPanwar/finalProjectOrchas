@@ -144,7 +144,7 @@ def updateinfo():
 def launch():
 	global salveno,client
 	salveno+=1
-	client.containers.run("slave:latest", name='slavespaw'+str(salveno), detach=True)
+	client.containers.run("slave:latest", name='slavespaw'+str(salveno), detach=True,links={'slave_db':'slave_db'})
 	client.containers.get('slavespaw'+str(salveno)).exec_run("python3 slave.py 1", detach=True)
 	print ("Succesfully launched a container")
 	updateinfo()
@@ -355,14 +355,16 @@ def timeout():
 	global coureads,coureadsprev
 	totalerq=coureads-coureadsprev
 	coureadsprev=coureads
+	print("checking start")
 	auto_start(totalerq)
+	print("checking stop")
 	auto_stop(totalerq)
 	print("reached fn")
 	fn()
 	print("fn called")
 
 def fn():
-	t = Timer(120.0, timeout)
+	t = Timer(30.0, timeout)
 	t.start()              
 
 flag=0
