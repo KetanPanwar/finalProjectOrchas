@@ -451,11 +451,13 @@ def callback_master(ch, method, props, body):
 	channel.basic_publish(exchange='syncexchange', routing_key='', body=body)
 	print("exiting sync")
 
-
+re=0
 def callback_slave(ch, method, props, body):
+	global re
+	re+=1
 	with open('innovators.csv', 'w', newline='') as file:
 		writer = csv.writer(file)
-		writer.writerow([1, 1, 1])
+		writer.writerow([re])
 	data=json.loads(body)
 	print(" [x] Received %r" % body)
 	print(" [x] Done")
