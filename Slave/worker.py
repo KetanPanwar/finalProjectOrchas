@@ -454,8 +454,8 @@ def callback_master(ch, method, props, body):
 
 def callback_slave(ch, method, props, body):
 	with open('innovators.csv', 'w', newline='') as file:
-    	writer = csv.writer(file)
-    	writer.writerow([1, 1, 1])
+		writer = csv.writer(file)
+		writer.writerow([1, 1, 1])
 	data=json.loads(body)
 	print(" [x] Received %r" % body)
 	print(" [x] Done")
