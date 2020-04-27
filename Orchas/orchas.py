@@ -157,6 +157,7 @@ def launch():
 def stop():
 	global running_containers_info
 	client.containers.get(running_containers_info[-1][-1]).stop()
+	print(client.containers.get(running_containers_info[-1][-1]).logs())
 	client.containers.get(running_containers_info[-1][-1]).remove()
 	print ("Succesfully killed a container")
 	updateinfo()
@@ -364,7 +365,7 @@ def timeout():
 	print("fn called")
 
 def fn():
-	t = Timer(120.0, timeout)
+	t = Timer(30.0, timeout)
 	t.start()              
 
 flag=0
