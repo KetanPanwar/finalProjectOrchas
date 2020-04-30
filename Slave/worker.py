@@ -16,7 +16,7 @@ print(m,type(m))
 print(sys.argv)
 
 
-myclient = pymongo.MongoClient("mongodb://slave_db:27017/")
+myclient = pymongo.MongoClient("0.0.0.0:27017/")
 
 
 if m=='0':

@@ -8,7 +8,7 @@ from datetime import datetime
 import pika
 import pymongo
 import sys
-
+import csv
 
 #0:master 1:slave
 m=sys.argv[1:][0]
@@ -16,7 +16,7 @@ print(m,type(m))
 print(sys.argv)
 
 
-myclient = pymongo.MongoClient("mongodb://master_db:27017/")
+myclient = pymongo.MongoClient("0.0.0.0:27017/")
 
 
 if m=='0':
@@ -451,8 +451,13 @@ def callback_master(ch, method, props, body):
 	channel.basic_publish(exchange='syncexchange', routing_key='', body=body)
 	print("exiting sync")
 
-
+re=0
 def callback_slave(ch, method, props, body):
+	global re
+	re+=1
+	with open('innovators.csv', 'w', newline='') as file:
+		writer = csv.writer(file)
+		writer.writerow([re])
 	data=json.loads(body)
 	print(" [x] Received %r" % body)
 	print(" [x] Done")
