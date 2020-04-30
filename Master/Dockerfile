@@ -3,8 +3,8 @@ FROM mvertes/alpine-mongo
 RUN apk update
 
 
-RUN apk install -y python3
-RUN apk install -y python-pip
+RUN apk install python3
+RUN apk install python-pip
 
 RUN pip install ipython pika kazoo flask pymongo requests uuid docker pandas Flask-PyMongo==2.3.0
 
