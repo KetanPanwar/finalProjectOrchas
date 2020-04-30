@@ -18,4 +18,3 @@ COPY . /app
 
 EXPOSE 5001
 
-CMD ["python3","worker.py","0"]
