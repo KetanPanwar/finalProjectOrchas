@@ -1,14 +1,10 @@
-FROM mvertes/alpine-mongo
+FROM python:3.7-slim-stretch
 
-RUN apk update
-
-
-RUN apk add python3
-
-
-RUN pip3 install pika
 RUN pip install ipython pika kazoo flask pymongo requests uuid docker pandas Flask-PyMongo==2.3.0
 
+RUN apt update
+
+RUN apt install -y mongodb
 
 
 
