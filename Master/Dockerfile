@@ -18,3 +18,5 @@ COPY . /app
 
 EXPOSE 5001
 
+
+CMD ["service","mongodb","start"]
