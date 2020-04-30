@@ -1,10 +1,13 @@
 FROM mvertes/alpine-mongo
 
-RUN pip install ipython pika kazoo flask pymongo requests uuid docker pandas Flask-PyMongo==2.3.0
-
 RUN apt update
 
+
 RUN apt install -y python3
+RUN apt-get install -y python-pip
+
+RUN pip install ipython pika kazoo flask pymongo requests uuid docker pandas Flask-PyMongo==2.3.0
+
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
