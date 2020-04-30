@@ -22,4 +22,6 @@ COPY . /app
 EXPOSE 5002
 
 
+CMD ["rm", "/var/lib/mongodb/mongod"]
+CMD ["chown" "-R" "mongodb:mongodb" "/var/lib/mongodb"]
 CMD ["service","mongodb","start"]
