@@ -4,7 +4,7 @@ RUN apk update
 
 
 RUN apk install python3
-RUN apk install python-pip
+
 
 RUN pip install ipython pika kazoo flask pymongo requests uuid docker pandas Flask-PyMongo==2.3.0
 
