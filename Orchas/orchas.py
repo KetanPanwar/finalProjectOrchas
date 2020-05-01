@@ -200,7 +200,7 @@ def stop():
 
 def read_numberof_containers():
 	global running_containers_info
-	return len(running_containers_info)+1
+	return len(running_containers_info)
 
 
 
