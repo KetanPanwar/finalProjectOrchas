@@ -124,7 +124,7 @@ def updateinfo():
 	for i in running_containers:
 		container_id = i.id 
 		container_name = i.name
-		if 'slave' in container_name:
+		if 'slave' in container_name and container_name!="slave_db":
 			cm="sudo docker inspect --format '{{.State.Pid}}'"+" " +str(container_id)[:12]
 			print("cm",cm)
 			stream = os.popen(cm) 
@@ -524,7 +524,7 @@ def clear_data():
 if __name__ == '__main__':
 	startup()
 	app.debug = True
-	app.run('0.0.0.0', port=80)
+	app.run('0.0.0.0', port=80,use_reloader=False)
 	# 
 	# http_server = WSGIServer(("",5000),app)
 	http_server.serve_forever()
