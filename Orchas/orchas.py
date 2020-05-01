@@ -112,6 +112,13 @@ salveno=0
 running_containers_info=[]
 client = docker.from_env()
 
+cmmas="sudo docker inspect --format '{{.State.Pid}}'"+" " +"master"
+cmsla="sudo docker inspect --format '{{.State.Pid}}'"+" " +"slave"
+stream1 = os.popen(cmmas)
+container_pid_master = stream1.read()
+stream2 = os.popen(cmsla)
+container_pid_slave = stream2.read()
+
 
 def updateinfo():
 	global running_containers_info,client
@@ -125,7 +132,7 @@ def updateinfo():
 			print("cm",cm)
 			stream = os.popen(cm) 
 			container_pid = stream.read()
-			container_pid=container_pid[:-2]
+			container_pid=container_pid
 			print("yes")
 			# cm='GET /v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1'
 			# resp_send = requests.get(
@@ -156,8 +163,10 @@ def launch():
 
 def stop():
 	global running_containers_info
+	global salveno,client
+	salveno-=1
 	client.containers.get(running_containers_info[-1][-1]).stop()
-	print(client.containers.get(running_containers_info[-1][-1]).logs())
+	# print(client.containers.get(running_containers_info[-1][-1]).logs())
 	client.containers.get(running_containers_info[-1][-1]).remove()
 	print ("Succesfully killed a container")
 	updateinfo()
@@ -353,6 +362,9 @@ def auto_start(c):
 
 
 def timeout():
+	print("reached fn")
+	fn()
+	print("fn called")
 	global coureads,coureadsprev
 	totalerq=coureads-coureadsprev
 	coureadsprev=coureads
@@ -360,15 +372,41 @@ def timeout():
 	auto_start(totalerq)
 	print("checking stop")
 	auto_stop(totalerq)
-	print("reached fn")
-	fn()
-	print("fn called")
+	
 
 def fn():
-	t = Timer(120.0, timeout)
+	t = Timer(30.0, timeout)
 	t.start()              
 
 flag=0
+
+
+@app.route('/api/v1/crash/master', methods=['POST'])
+def crash_master():
+	pass
+
+	
+
+
+@app.route('/api/v1/crash/slave', methods=['POST'])
+def crash_slave():
+	pass
+	
+
+
+
+@app.route('/api/v1/worker/list', methods=['GET'])
+def list_worker():
+	updateinfo()
+	global running_containers_info
+	resf=[container_pid_master,container_pid_slave]
+	for i in running_containers_info:
+		resf.append(i[0])
+	resf.sort()
+	return jsonify(resf),200
+
+
+
 
 
 @app.route('/api/v1/db/write', methods=['POST', 'DELETE'])
