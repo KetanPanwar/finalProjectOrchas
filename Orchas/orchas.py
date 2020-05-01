@@ -522,8 +522,9 @@ def clear_data():
 
 
 if __name__ == '__main__':
-	startup()
+	
 	app.debug = True
 	app.run('0.0.0.0', port=80)
+	startup()
 	# http_server = WSGIServer(("",5000),app)
 	http_server.serve_forever()
