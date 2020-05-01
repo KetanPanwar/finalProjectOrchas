@@ -115,9 +115,9 @@ client = docker.from_env()
 cmmas="sudo docker inspect --format '{{.State.Pid}}'"+" " +"master"
 cmsla="sudo docker inspect --format '{{.State.Pid}}'"+" " +"slave"
 stream1 = os.popen(cmmas)
-container_pid_master = stream1.read()
+container_pid_master = int(stream1.read())
 stream2 = os.popen(cmsla)
-container_pid_slave = stream2.read()
+container_pid_slave = int(stream2.read())
 
 
 def updateinfo():
@@ -141,7 +141,7 @@ def updateinfo():
 			# d=json.loads(d)
 			print("cid",container_pid)
 			container_pid = int(container_pid) 
-			running_containers_info.append( [str(container_pid),str(container_id),str(container_name)])
+			running_containers_info.append( [container_pid,str(container_id),str(container_name)])
 	running_containers_info.sort()
 	print("rci",running_containers_info)
 
