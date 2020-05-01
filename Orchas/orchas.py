@@ -146,8 +146,8 @@ def updateinfo():
 
 def startup():
 	global master_info,salveno
-	client.containers.run("worker:latest", name='master',network='finalprojectorchas_default', detach=True,links={'master_db':'master_db'})
-	client.containers.get('master').exec_run("python3 worker.py 0", detach=True)
+	client.containers.run("worker:latest", name='master', command="python3 worker.py 0",network='finalprojectorchas_default', detach=True,links={'master_db':'master_db'})
+	# client.containers.get('master').exec_run("python3 worker.py 0", detach=True)
 	running_containers = client.containers.list() 
 	for i in running_containers:
 		container_id = i.id 
@@ -166,8 +166,8 @@ def startup():
 	print("master created",master_info)
 	global salveno,running_containers_info
 	salveno+=1
-	client.containers.run("worker:latest", name='slave'+str(salveno),network='finalprojectorchas_default', detach=True,links={'slave_db':'slave_db'})
-	client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
+	client.containers.run("worker:latest", name='slave'+str(salveno),command="python3 worker.py 1",network='finalprojectorchas_default', detach=True,links={'slave_db':'slave_db'})
+	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	updateinfo()
 	print("slave created",running_containers_info)
 
@@ -176,7 +176,7 @@ def startup():
 def launch():
 	global salveno,client
 	salveno+=1
-	client.containers.run("worker:latest", name='slave'+str(salveno),network='finalprojectorchas_default', detach=True,links={'slave_db':'slave_db'})
+	client.containers.run("worker:latest", name='slave'+str(salveno),command="python3 worker.py 1",network='finalprojectorchas_default', detach=True,links={'slave_db':'slave_db'})
 	client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	print ("Succesfully launched a container")
 	updateinfo()
