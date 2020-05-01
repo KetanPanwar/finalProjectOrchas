@@ -111,13 +111,10 @@ coureadsprev=0
 salveno=0
 running_containers_info=[]
 client = docker.from_env()
+master_info=[]
 
-cmmas="sudo docker inspect --format '{{.State.Pid}}'"+" " +"master"
-cmsla="sudo docker inspect --format '{{.State.Pid}}'"+" " +"slave"
-stream1 = os.popen(cmmas)
-container_pid_master = int(stream1.read())
-stream2 = os.popen(cmsla)
-container_pid_slave = int(stream2.read())
+
+
 
 
 def updateinfo():
@@ -127,7 +124,7 @@ def updateinfo():
 	for i in running_containers:
 		container_id = i.id 
 		container_name = i.name
-		if 'slavespaw' in container_name:
+		if 'slave' in container_name:
 			cm="sudo docker inspect --format '{{.State.Pid}}'"+" " +str(container_id)[:12]
 			print("cm",cm)
 			stream = os.popen(cm) 
@@ -147,12 +144,40 @@ def updateinfo():
 
 
 
+def startup():
+	global master_info
+	client.containers.run("worker:latest", name='master',network='finalprojectorchas_default', detach=True,links={'master_db':'master_db'})
+	client.containers.get('slavespaw'+str(salveno)).exec_run("python3 worker.py 0", detach=True)
+	running_containers = client.containers.list() 
+	for i in running_containers:
+		container_id = i.id 
+		container_name = i.name
+		if container_name=='master':
+			cm="sudo docker inspect --format '{{.State.Pid}}'"+" " +str(container_id)[:12]
+			# print("cm",cm)
+			stream = os.popen(cm) 
+			container_pid = stream.read()
+			container_pid=container_pid
+			print("cid",container_pid)
+			container_pid = int(container_pid) 
+			master_info.append(container_pid)
+			master_info.append(container_id)
+			master_info.append(container_name)
+	print("master created",master_info)
+	global salveno,running_containers_info
+	salveno+=1
+	client.containers.run("worker:latest", name='slave'+str(salveno),network='finalprojectorchas_default', detach=True,links={'slave_db':'slave_db'})
+	client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
+	updateinfo()
+	print("slave created",running_containers_info)
+
+
 
 def launch():
 	global salveno,client
 	salveno+=1
-	client.containers.run("slave:latest", name='slavespaw'+str(salveno),network='finalprojectorchas_default', detach=True,links={'slave_db':'slave_db'})
-	client.containers.get('slavespaw'+str(salveno)).exec_run("python3 slave.py 1", detach=True)
+	client.containers.run("worker:latest", name='slave'+str(salveno),network='finalprojectorchas_default', detach=True,links={'slave_db':'slave_db'})
+	client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	print ("Succesfully launched a container")
 	updateinfo()
 	return
@@ -383,14 +408,25 @@ flag=0
 
 @app.route('/api/v1/crash/master', methods=['POST'])
 def crash_master():
-	pass
+	updateinfo()
+	cmkillmas="sudo docker stop"+" " +"master"
+	os.popen(cmkillmas)
+	cmkillmas="sudo docker rm"+" " +"master"
+	os.popen(cmkillmas)
+	return jsonify({}),200
+	
 
 	
 
 
 @app.route('/api/v1/crash/slave', methods=['POST'])
 def crash_slave():
-	pass
+	updateinfo()
+	cmkillsal="sudo docker stop"+" " +"slave"
+	os.popen(cmkillsal)
+	cmkillsal="sudo docker rm"+" " +"salve"
+	os.popen(cmkillsal)
+	return jsonify({}),200
 	
 
 
@@ -399,7 +435,7 @@ def crash_slave():
 def list_worker():
 	updateinfo()
 	global running_containers_info
-	resf=[container_pid_master,container_pid_slave]
+	resf=[master_info[0]]
 	for i in running_containers_info:
 		resf.append(i[0])
 	resf.sort()
@@ -486,7 +522,7 @@ def clear_data():
 
 
 if __name__ == '__main__':
-
+	startup()
 	app.debug = True
 	app.run('0.0.0.0', port=80)
 	# http_server = WSGIServer(("",5000),app)
