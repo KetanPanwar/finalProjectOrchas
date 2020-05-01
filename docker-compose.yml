@@ -1,0 +1,33 @@
+version: "3"
+services:
+  master:
+    container_name: master
+    restart: on-failure
+    image: master:latest
+    ports:
+      - 8001:5001
+    environment:
+      - TEAM_NAME=CC_0195_0309
+    depends_on:
+      - master_db
+  slave:
+    container_name: slave
+    restart: on-failure
+    image: slave:latest
+    ports:
+      - 8002:5002
+    environment:
+      - TEAM_NAME=CC_0195_0309
+    depends_on:
+      - slave_db
+  master_db:
+    container_name: master_db
+    image: mongo
+    environment:
+      - TEAM_NAME=CC_0195_0309
+
+  slave_db:
+    container_name: slave_db
+    image: mongo
+    environment:
+      - TEAM_NAME=CC_0195_0309
