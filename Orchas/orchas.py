@@ -172,6 +172,11 @@ def startup():
 	print("slave created",running_containers_info)
 
 
+def kill():
+	client.containers.get("master").stop()
+	# print(client.containers.get(running_containers_info[-1][-1]).logs())
+	client.containers.get("master").remove()
+
 
 def launch():
 	global salveno,client
@@ -525,6 +530,6 @@ if __name__ == '__main__':
 	startup()
 	app.debug = True
 	app.run('0.0.0.0', port=80,use_reloader=False)
-	# 
+	kill()
 	# http_server = WSGIServer(("",5000),app)
 	http_server.serve_forever()
