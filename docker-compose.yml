@@ -22,12 +22,12 @@ services:
       - slave_db
   master_db:
     container_name: master_db
-    image: mongo
+    image: mvertes/alpine-mongo
     environment:
       - TEAM_NAME=CC_0195_0309
 
   slave_db:
     container_name: slave_db
-    image: mongo
+    image: mvertes/alpine-mongo
     environment:
       - TEAM_NAME=CC_0195_0309
