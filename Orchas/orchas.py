@@ -145,9 +145,9 @@ def updateinfo():
 
 
 def startup():
-	global master_info
+	global master_info,salveno
 	client.containers.run("worker:latest", name='master',network='finalprojectorchas_default', detach=True,links={'master_db':'master_db'})
-	client.containers.get('slavespaw'+str(salveno)).exec_run("python3 worker.py 0", detach=True)
+	client.containers.get('master').exec_run("python3 worker.py 0", detach=True)
 	running_containers = client.containers.list() 
 	for i in running_containers:
 		container_id = i.id 
