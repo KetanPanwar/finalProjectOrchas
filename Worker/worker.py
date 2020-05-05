@@ -16,15 +16,23 @@ print(m,type(m))
 print(sys.argv)
 
 
+
 myclient = pymongo.MongoClient("mongodb://0.0.0.0:27017/")
 
 
 if m=='0':
 	mydb = myclient["RideShare"]
+	usercol = mydb["users"]
+	ridecol = mydb["rides"]
 if m=='1':
 	mydb = myclient["RideShareSlave"]
-usercol = mydb["users"]
-ridecol = mydb["rides"]
+	usercol = mydb["users"]
+	ridecol = mydb["rides"]
+	resp_send = requests.post("http://18.210.117.50:80/api/v1/db/copydbtoslave", json={})
+	if(resp_send.status_code == 200):
+		s = dumps(resp_send.content)
+		print(s)
+
 
 
 connection = pika.BlockingConnection(
