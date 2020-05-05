@@ -470,7 +470,7 @@ def write_data():
 		# data['query']='insert'
 		data2=json.dumps(data)
 		file1 = open("commands.txt","a+")
-		data3=data2+'\n'
+		data3=data2
 		file1.write(data3)
 		file1.close() 
 		resp=write_rpc.call(data2)
@@ -488,7 +488,7 @@ def write_data():
 		# data['who']='rides'
 		data2=json.dumps(data)
 		file1 = open("commands.txt","a+")
-		data3=data2+'\n'
+		data3=data2
 		file1.write(data3)
 		file1.close() 
 		resp=write_rpc.call(data2)
@@ -542,7 +542,8 @@ def clear_data():
 def copy_data():
 	file1 = open("commands.txt","a+")
 	res=file1.readlines() 
-	return jsonify(res),200
+	m=josn.loads(res[0])
+	return m,200
 
 
 
