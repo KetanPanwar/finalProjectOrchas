@@ -469,6 +469,10 @@ def write_data():
 		# data['who']='rides'
 		# data['query']='insert'
 		data2=json.dumps(data)
+		file1 = open("commands.txt","a+")
+		data3=data2+'\n'
+		file1.write(data3)
+		file1.close() 
 		resp=write_rpc.call(data2)
 		m=json.loads(resp)
 		return jsonify(m['respo']),m['rcode']
@@ -483,6 +487,10 @@ def write_data():
 		data['method']='delete'
 		# data['who']='rides'
 		data2=json.dumps(data)
+		file1 = open("commands.txt","a+")
+		data3=data2+'\n'
+		file1.write(data3)
+		file1.close() 
 		resp=write_rpc.call(data2)
 		m=json.loads(resp)
 		return jsonify(m['respo']),m['rcode']
@@ -528,6 +536,15 @@ def clear_data():
 	resp=write_rpc.call(data2)
 	m=json.loads(resp)
 	return jsonify(m['respo']),m['rcode']
+
+
+@app.route('/api/v1/db/copydbtoslave', methods=['POST'])
+def copy_data():
+	file1 = open("commands.txt","a+")
+	res=file1.readlines() 
+	return jsonify(res),200
+
+
 
 
 if __name__ == '__main__':
