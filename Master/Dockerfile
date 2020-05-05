@@ -16,6 +16,6 @@ WORKDIR /app
 
 COPY . /app
 
-EXPOSE 5001
+EXPOSE 27017
 
 CMD ["service","mongodb","start"]
