@@ -542,7 +542,7 @@ def clear_data():
 def copy_data():
 	file1 = open("commands.txt","a+")
 	res=file1.readlines() 
-	return res,200
+	return jsonify(res),200
 
 
 
