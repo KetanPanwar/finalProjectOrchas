@@ -8,6 +8,8 @@ RUN apt-get update && \
     pip3 install requests && \
     pip3 install pika
 
+RUN apt install -y mongodb
+
 ENV TEAM_NAME=CC_0195_0309
 
 WORKDIR /app
@@ -16,4 +18,4 @@ COPY . /app
 
 EXPOSE 5002
 
-
+CMD ["service","mongodb","start"]
