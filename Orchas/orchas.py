@@ -418,6 +418,10 @@ def crash_master():
 	os.popen(cmkillmas)
 	cmkillmas="sudo docker rm"+" " +"master"
 	os.popen(cmkillmas)
+	global running_containers_info
+	cmkillmas="sudo docker rename "+running_containers_info[0][1]+" master"
+	os.popen(cmkillmas)
+	client.containers.get('master').stop()
 	return jsonify({}),200
 	
 
