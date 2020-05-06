@@ -530,12 +530,13 @@ def clear_data():
 		return jsonify({}), abort_code
 	# print(data)
 	# data['who']='rides'
-	f = open("commands.txt","w")
-	f.truncate()
-	f.close()
 	data['method']='post'
 	data['op']='clear'
 	data2=json.dumps(data)
+	file1 = open("commands.txt","a+")
+	data3=data2
+	file1.write(data3)
+	file1.close() 
 	resp=write_rpc.call(data2)
 	m=json.loads(resp)
 	return jsonify(m['respo']),m['rcode']
