@@ -20,6 +20,7 @@ print(sys.argv)
 myclient = pymongo.MongoClient("mongodb://0.0.0.0:27017/")
 
 
+
 if m=='0':
 	mydb = myclient["RideShare"]
 	usercol = mydb["users"]
@@ -28,11 +29,6 @@ if m=='1':
 	mydb = myclient["RideShareSlave"]
 	usercol = mydb["users"]
 	ridecol = mydb["rides"]
-	resp_send = requests.post("http://18.210.117.50:80/api/v1/db/copydbtoslave", json={})
-	if(resp_send.status_code == 200):
-		s = dumps(resp_send.content)
-		print(s)
-
 
 
 connection = pika.BlockingConnection(
@@ -560,6 +556,72 @@ def callback_slave_sync(ch, method, properties, body):
 		# 			 body=h)
 		# ch.basic_ack(delivery_tag=method.delivery_tag)
 		print("response sent")
+
+def callback_slave_data_up(data):
+	print("callback_slave_data_up")
+	data=json.loads(body)
+	print(" [x] Received %r" % body)
+	print(" [x] Done")
+	data=json.loads(body)
+	who=data['who']
+	del data['who']
+	if who=='users':
+		print("its user")
+		op=data['op']
+		del data['op']
+		if op=='write':
+			print('caling write',data)
+			ret=write_data_users(data)
+			print("data Received")
+			h=json.dumps(ret)
+			print("data is ",h)
+		elif op=='clear':
+			ret=clear_data_users()
+			h=json.dumps(ret)
+		elif op=='coun':
+			ret=coun_users()
+			h=json.dumps(ret)
+		elif op=='reset':
+			ret=reset_request_count_users()
+			h=json.dumps(ret)
+		print("response sent")
+	
+
+	elif who=='rides':
+		print("its rides")
+		op=data['op']
+		del data['op']
+		if op=='write':
+			ret=write_data_rides(data)
+			h=json.dumps(ret)
+			print("data is ",h)
+		elif op=='clear':
+			ret=clear_data_rides()
+			h=json.dumps(ret)
+		elif op=='coun':
+			ret=coun_rides()
+			h=json.dumps(ret)
+		elif op=='reset':
+			ret=reset_request_count_rides()
+			h=json.dumps(ret)
+		print("response sent")
+
+if m=='1':
+	resp_send = requests.post("http://18.210.117.50:80/api/v1/db/copydbtoslave", json={})
+	s = json.loads(resp_send.content)
+	print(s,type(s),type(s[0]))
+	l=s[0].split('}')
+	fnl=[]
+	for i in l:
+		if i:fnl.append(i+'}')
+	for i in fnl:
+		print(i)
+		print("hey")
+		m=json.loads(i)
+		print(m,type(m))
+		callback_slave_data_up(m)
+
+
 
 if m=='1':
 	channel.basic_consume(
