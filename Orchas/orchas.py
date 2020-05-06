@@ -182,7 +182,7 @@ def launch():
 	global salveno,client
 	salveno+=1
 	client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
-	client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
+	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	print ("Succesfully launched a container")
 	updateinfo()
 	return
