@@ -36,7 +36,7 @@ connection = pika.BlockingConnection(
 channel = connection.channel()
 
 if m=='0':
-	result = channel.queue_declare(queue='rpc_queue_write')
+	result = channel.queue_declare(queue='rpc_queue_write',exclusive=True)
 if m=='1':
 	result = channel.queue_declare(queue='rpc_queue_read')
 
@@ -607,7 +607,7 @@ def callback_slave_data_up(data):
 		print("response sent")
 
 if m=='1':
-	resp_send = requests.post("http://18.210.117.50:80/api/v1/db/copydbtoslave", json={})
+	resp_send = requests.post("http://52.72.92.96:80/api/v1/db/copydbtoslave", json={})
 	s = json.loads(resp_send.content)
 	print(s,type(s),type(s[0]))
 	l=s[0].split('}')
