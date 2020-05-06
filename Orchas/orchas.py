@@ -398,9 +398,9 @@ def timeout():
 	global coureads,coureadsprev
 	totalerq=coureads-coureadsprev
 	coureadsprev=coureads
-	print("checking start")
+	print("checking start",read_numberof_containers())
 	auto_start(totalerq)
-	print("checking stop")
+	print("checking stop",read_numberof_containers())
 	auto_stop(totalerq)
 	
 
