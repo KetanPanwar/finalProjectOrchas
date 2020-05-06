@@ -405,7 +405,7 @@ def timeout():
 	
 
 def fn():
-	t = Timer(60.0, timeout)
+	t = Timer(120.0, timeout)
 	t.start()              
 
 flag=0
