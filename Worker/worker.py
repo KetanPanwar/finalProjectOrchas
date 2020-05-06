@@ -558,11 +558,8 @@ def callback_slave_sync(ch, method, properties, body):
 		print("response sent")
 
 def callback_slave_data_up(data):
-	print("callback_slave_data_up")
-	data=json.loads(body)
-	print(" [x] Received %r" % body)
+	print(" [x] Received %r" % data)
 	print(" [x] Done")
-	data=json.loads(body)
 	who=data['who']
 	del data['who']
 	if who=='users':
