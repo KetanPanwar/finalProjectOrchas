@@ -615,9 +615,9 @@ if m=='1':
 	for i in fnl:
 		print(i)
 		print("hey")
-		m=json.loads(i)
-		print(m,type(m))
-		callback_slave_data_up(m)
+		mio=json.loads(i)
+		print(mio,type(mio))
+		callback_slave_data_up(mio)
 
 
 
