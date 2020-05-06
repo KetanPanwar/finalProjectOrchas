@@ -36,7 +36,7 @@ connection = pika.BlockingConnection(
 channel = connection.channel()
 
 if m=='0':
-	result = channel.queue_declare(queue='rpc_queue_write', exclusive=True)
+	result = channel.queue_declare(queue='rpc_queue_write')
 if m=='1':
 	result = channel.queue_declare(queue='rpc_queue_read')
 
