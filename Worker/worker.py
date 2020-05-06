@@ -634,3 +634,4 @@ if m=='1':
 
 print(" [x] Awaiting RPC requests")
 channel.start_consuming()
+print("reached here")

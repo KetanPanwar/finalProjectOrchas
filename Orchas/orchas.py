@@ -530,6 +530,9 @@ def clear_data():
 		return jsonify({}), abort_code
 	# print(data)
 	# data['who']='rides'
+	f = open("commands.txt","w")
+	f.truncate()
+	f.close()
 	data['method']='post'
 	data['op']='clear'
 	data2=json.dumps(data)
