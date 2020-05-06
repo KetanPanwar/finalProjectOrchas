@@ -606,8 +606,9 @@ def callback_slave_data_up(data):
 if m=='1':
 	resp_send = requests.post("http://52.72.92.96:80/api/v1/db/copydbtoslave", json={})
 	s = json.loads(resp_send.content)
-	print(s,type(s),type(s[0]))
-	l=s[0].split('}')
+	# print(s,type(s),type(s[0]))
+	l=[]
+	if s:l=s[0].split('}')
 	fnl=[]
 	for i in l:
 		if i:fnl.append(i+'}')
