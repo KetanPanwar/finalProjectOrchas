@@ -16,6 +16,8 @@ zk.start()
 zk.ensure_path("/sample1")
 
 
+
+
 #0:master 1:slave
 m=sys.argv[1:][0]
 print(m,type(m))
