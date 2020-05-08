@@ -28,9 +28,9 @@ print(sys.argv)
 myclient = pymongo.MongoClient("mongodb://0.0.0.0:27017/")
 
 if m=='0':
-	zk.create(path="/sample1",value=b'master',ephemeral=True, sequence=True)
+	zk.create(path="/sample1/node",value=b'master',ephemeral=True, sequence=True)
 if m=='1':
-	zk.create(path="/sample1",value=b'salve',ephemeral=True, sequence=True)
+	zk.create(path="/sample1/node",value=b'salve',ephemeral=True, sequence=True)
 
 if m=='0':
 	mydb = myclient["RideShare"]
