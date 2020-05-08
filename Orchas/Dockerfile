@@ -16,6 +16,6 @@ WORKDIR /app
 
 COPY . /app
 
-EXPOSE 5000
+EXPOSE 80
 
 CMD ["python3","orchas.py"]
