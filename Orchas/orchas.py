@@ -110,11 +110,16 @@ coureads=0
 coureadsprev=0
 salveno=0
 running_containers_info=[]
-client = docker.from_env()
+client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 master_info=[]
 
 
-
+def getpid(c_id):
+	x = client.containers.get(c_id)
+	y = x.top()
+	z = y["Processes"]
+	pid = z[0][2]
+	return (int(pid))
 
 
 def updateinfo():
@@ -125,11 +130,12 @@ def updateinfo():
 		container_id = i.id 
 		container_name = i.name
 		if 'slave' in container_name and container_name!="slave_db":
-			cm="sudo docker inspect --format '{{.State.Pid}}'"+" " +str(container_id)[:12]
-			print("cm",cm)
-			stream = os.popen(cm) 
-			container_pid = stream.read()
-			container_pid=container_pid
+			# cm="sudo docker inspect --format '{{.State.Pid}}'"+" " +str(container_id)[:12]
+			# print("cm",cm)
+			# stream = os.popen(cm) 
+			# container_pid = stream.read()
+			# container_pid=container_pid
+			container_pid=getpid(container_id)
 			print("yes")
 			# cm='GET /v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1'
 			# resp_send = requests.get(
@@ -137,7 +143,7 @@ def updateinfo():
 			# d = json.loads(resp_send.content)
 			# d=json.loads(d)
 			print("cid",container_pid)
-			container_pid = int(container_pid) 
+			# container_pid = int(container_pid) 
 			running_containers_info.append( [container_pid,str(container_id),str(container_name)])
 	running_containers_info.sort()
 	print("rci",running_containers_info)
@@ -153,11 +159,12 @@ def startup():
 		container_id = i.id 
 		container_name = i.name
 		if container_name=='master':
-			cm="sudo docker inspect --format '{{.State.Pid}}'"+" " +str(container_id)[:12]
+			# cm="sudo docker inspect --format '{{.State.Pid}}'"+" " +str(container_id)[:12]
 			# print("cm",cm)
-			stream = os.popen(cm) 
-			container_pid = stream.read()
-			container_pid=container_pid
+			# stream = os.popen(cm) 
+			# container_pid = stream.read()
+			# container_pid=container_pid
+			container_pid=getpid(container_id)
 			print("cid",container_pid)
 			container_pid = int(container_pid) 
 			master_info.append(container_pid)
@@ -554,7 +561,7 @@ def copy_data():
 if __name__ == '__main__':
 	startup()
 	app.debug = True
-	app.run('0.0.0.0', port=80,use_reloader=False)
+	app.run('0.0.0.0', port=5000,use_reloader=False)
 	kill()
 	# http_server = WSGIServer(("",5000),app)
 	http_server.serve_forever()
