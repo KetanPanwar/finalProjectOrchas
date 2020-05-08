@@ -14,7 +14,10 @@ import uuid
 from threading import Timer
 import docker 
 import os
+from kazoo.client import KazooClient
 
+zk = KazooClient(hosts='3.212.113.11:2181')
+zk.start()
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
