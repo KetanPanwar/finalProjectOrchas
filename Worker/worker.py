@@ -9,6 +9,12 @@ import pika
 import pymongo
 import sys
 import csv
+from kazoo.client import KazooClient
+
+zk = KazooClient(hosts='3.212.113.11:2181')
+zk.start()
+zk.ensure_path("/sample1")
+
 
 #0:master 1:slave
 m=sys.argv[1:][0]
@@ -19,7 +25,10 @@ print(sys.argv)
 
 myclient = pymongo.MongoClient("mongodb://0.0.0.0:27017/")
 
-
+if m=='0':
+	zk.create(path="/sample1",value=b'master',ephemeral=True, sequence=True)
+if m=='1':
+	zk.create(path="/sample1",value=b'salve',ephemeral=True, sequence=True)
 
 if m=='0':
 	mydb = myclient["RideShare"]

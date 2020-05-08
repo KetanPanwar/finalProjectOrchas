@@ -19,6 +19,23 @@ from kazoo.client import KazooClient
 zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
 
+
+@zk.ChildrenWatch("/sample1")
+def start_zookeeping(children):
+    print("There are %s children with names %s" % (len(children), children))
+    flag = 1
+    for i in children:
+        data,stat = zk.get("sample1/"+i)
+        x = data.decode("utf-8")
+        #print("Child: %s  ---  Data: %s" % (i, data.decode("utf-8")))
+        if x=="master" :
+            print("{} is the master".format(i))
+            flag = 0
+    if flag and children:
+        zk.set("sample1/"+children[0],b'master')
+
+
+
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 @app.route('/')
