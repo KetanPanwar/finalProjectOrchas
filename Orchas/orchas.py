@@ -552,7 +552,7 @@ def clear_data():
 
 @app.route('/api/v1/db/copydbtoslave', methods=['POST'])
 def copy_data():
-	file1 = open("commands.txt","a+")
+	file1 = open("commands.txt","r")
 	res=file1.readlines() 
 	return jsonify(res),200
 
