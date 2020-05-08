@@ -152,6 +152,7 @@ def updateinfo():
 
 def startup():
 	global master_info,salveno
+	running_containers = client.containers.list()
 	client.containers.run("worker:latest", name='master', command=["sh","-c","service mongodb start; python3 worker.py 0"],network='sample1', detach=True)
 	# client.containers.get('master').exec_run("python3 worker.py 0", detach=True)
 	running_containers = client.containers.list() 
