@@ -562,7 +562,7 @@ def copy_data():
 if __name__ == '__main__':
 	startup()
 	app.debug = True
-	app.run('0.0.0.0', port=5000,use_reloader=False)
+	app.run('0.0.0.0', port=80,use_reloader=False)
 	kill()
 	# http_server = WSGIServer(("",5000),app)
 	http_server.serve_forever()
