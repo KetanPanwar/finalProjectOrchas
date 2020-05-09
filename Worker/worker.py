@@ -621,11 +621,13 @@ if m=='1':
 
 if m=='0':
 	msg=zk.get("/worker/master")[0]
+	print(msg)
 	zk.set("/worker/master",b"")
 	master_pid=msg.decode().split()[1]
 	zk.create(path=("/worker/master/"+master_pid),value=b'working')
 if m=='1':
 	msg=zk.get("/worker/slave")[0]
+	print(msg)
 	zk.set("/worker/slave",b"")
 	slave_pid=msg.decode().split()[1]
 	zk.create(path=("/worker/slave/"+slave_pid),value=b'working')
