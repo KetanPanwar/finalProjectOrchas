@@ -190,9 +190,13 @@ def startup():
 
 
 def kill():
-	client.containers.get("master").stop()
-	# print(client.containers.get(running_containers_info[-1][-1]).logs())
-	client.containers.get("master").remove()
+	running_containers = client.containers.list() 
+	for i in running_containers:
+		container_id = i.id 
+		container_name = i.name
+		if container_name!='orchast':
+			client.containers.get(container_id).stop()
+			client.containers.get(container_id).remove()
 
 
 def launch():
