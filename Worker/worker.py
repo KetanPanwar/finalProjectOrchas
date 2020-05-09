@@ -10,6 +10,7 @@ import pymongo
 import sys
 import csv
 from kazoo.client import KazooClient
+import threading 
 
 zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
@@ -683,5 +684,7 @@ if m=='1':
 	channel.basic_consume(queue='rpc_queue_read', on_message_callback=callback_slave)
 
 print(" [x] Awaiting RPC requests")
-channel.start_consuming()
+# channel.start_consuming()
+t1=threading.Thread(target=channel.start_consuming)
+t1.start()
 print("reached here")
