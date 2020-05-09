@@ -234,12 +234,13 @@ def masterswatch(data,stat):
 		data1=data.decode()
 		if data1=='removed':
 			print("And then the master said : My watch begins :-)")
-			global running_containers_info,master_info
+			global running_containers_info,master_info,salveno
 			zk.set("/worker/slave/"+str(running_containers_info[-1][0]), b"changed")
 			csl=running_containers_info.pop(-1)
 			client.containers.get(csl[0]).rename('master')
 			csl[-1]='master'
 			master_info.extend(csl)
+			salveno-=1
 			retu=launch()
 			print("called launch")
 			print("And master watch ends :-(")
@@ -593,7 +594,7 @@ def copy_data():
 	file1 = open("commands.txt","a+")
 	file1.seek(0)  
 	res=file1.readlines() 
-	print('ress',res)
+	# print('ress',res)
 	return jsonify(res),200
 
 

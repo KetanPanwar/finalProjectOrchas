@@ -26,7 +26,9 @@ print(sys.argv)
 
 
 myclient = pymongo.MongoClient("mongodb://0.0.0.0:27017/")
-
+mydb = myclient["RideShare"]
+usercol = mydb["users"]
+ridecol = mydb["rides"]
 
 
 
@@ -659,15 +661,6 @@ def change_behaviour():
 	print("behavious changed")
 	channel.start_consuming()
 
-
-if m=='0':
-	mydb = myclient["RideShare"]
-	usercol = mydb["users"]
-	ridecol = mydb["rides"]
-if m=='1':
-	mydb = myclient["RideShare"]
-	usercol = mydb["users"]
-	ridecol = mydb["rides"]
 
 if m=='0':
 	result = channel.queue_declare(queue='rpc_queue_write',exclusive=True)
