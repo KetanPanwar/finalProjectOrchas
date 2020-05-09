@@ -201,6 +201,9 @@ def launch():
 	tem=client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
 	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	print ("Succesfully launched a container")
+	retu=getpid(tem.id)
+	zk.set("/worker/slave",("working "+str(retu)).encode())
+	print("making a node")
 	updateinfo()
 	return getpid(tem.id)
 
@@ -239,7 +242,6 @@ def masterswatch(data,stat):
 			master_info.extend(csl)
 			retu=launch()
 			print("called launch")
-			zk.set("/worker/slave",("working"+str(retu)).encode())
 			print("And master watch ends :-(")
 
 
@@ -466,7 +468,7 @@ def crash_master():
 @app.route('/api/v1/crash/slave', methods=['POST'])
 def crash_slave():
 	updateinfo()
-	global running_containers_info
+	global running_containers_info,salveno
 	client.containers.get(running_containers_info[-1][-1]).stop()
 	# print(client.containers.get(running_containers_info[-1][-1]).logs())
 	client.containers.get(running_containers_info[-1][-1]).remove()
@@ -476,6 +478,9 @@ def crash_slave():
 	zk.set("/worker/slave", b"removed")
 	resfi=[running_containers_info[-1][0]]
 	running_containers_info.pop(-1)
+	salveno-=1
+	launch()
+	print("launch called")
 	return jsonify(resfi),200
 	
 
