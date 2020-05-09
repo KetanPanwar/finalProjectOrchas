@@ -644,6 +644,7 @@ if m=='1':
 				print("deleted kazoo node for slave")
 				zk.create("/worker/master/"+slave_pid, b"working")
 				print("znode converted to master")
+				change_behaviour()
 
 
 def change_behaviour():
