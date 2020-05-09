@@ -31,11 +31,11 @@ app.config['JSON_SORT_KEYS'] = False
 # channel=0
 # def fn():
 # 	global connection,channel
-# 	connection = pika.BlockingConnection(
-# 	    pika.ConnectionParameters(host='rmq'))
-# 	channel = connection.channel()
+# connection = pika.BlockingConnection(pika.ConnectionParameters(host='rmq'))
+# channel = connection.channel()
 
-# 	channel.exchange_declare(exchange='readnwrite', exchange_type='direct')
+# channel.exchange_declare(exchange='readnwrite', exchange_type='direct')
+# result = channel.queue_declare(queue='rpc_queue_write')
 
 
 class forWrite(object):

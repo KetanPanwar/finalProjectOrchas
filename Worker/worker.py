@@ -650,14 +650,14 @@ if m=='1':
 
 def change_behaviour():
 	global channel,connection
-	connection.close()
+	channel.close()
 	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
 	channel=connection.channel()
 	channel.exchange_declare(exchange='syncexchange', exchange_type='fanout')
 	result1 = channel.queue_declare(queue='')
 	channel.queue_bind(exchange='syncexchange',
 				   queue=result1.method.queue)
-	result = channel.queue_declare(queue='rpc_queue_write',exclusive=True)
+	result = channel.queue_declare(queue='rpc_queue_write')
 	channel.basic_qos(prefetch_count=1)
 	channel.basic_consume(queue='rpc_queue_write', on_message_callback=callback_master)
 	print("behavious changed")
@@ -665,7 +665,7 @@ def change_behaviour():
 
 
 if m=='0':
-	result = channel.queue_declare(queue='rpc_queue_write',exclusive=True)
+	result = channel.queue_declare(queue='rpc_queue_write')
 if m=='1':
 	result = channel.queue_declare(queue='rpc_queue_read')
 
