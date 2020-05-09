@@ -42,7 +42,7 @@ class forWrite(object):
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='3.212.113.11'))
+			pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
 
 		self.channel = self.connection.channel()
 
@@ -80,7 +80,7 @@ class forRead(object):
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='3.212.113.11'))
+			pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
 
 		self.channel = self.connection.channel()
 

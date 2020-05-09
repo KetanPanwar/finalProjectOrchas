@@ -33,7 +33,7 @@ ridecol = mydb["rides"]
 
 
 connection = pika.BlockingConnection(
-	pika.ConnectionParameters(host='3.212.113.11'))
+	pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
 channel = connection.channel()
 
 
@@ -649,7 +649,7 @@ if m=='1':
 def change_behaviour():
 	global channel,connection
 	channel.stop_consuming()
-	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11'))
+	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
 	channel=connection.channel()
 	channel.exchange_declare(exchange='syncexchange', exchange_type='fanout')
 	result1 = channel.queue_declare(queue='')
