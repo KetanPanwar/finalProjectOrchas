@@ -645,12 +645,13 @@ if m=='1':
 				print("deleted kazoo node for slave")
 				zk.create("/worker/master/"+slave_pid, b"working")
 				print("znode converted to master")
+				channel.stop_consuming()
 				change_behaviour()
 
 
 def change_behaviour():
 	global channel,connection
-	channel.stop_consuming()
+	# channel.stop_consuming()
 	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
 	channel=connection.channel()
 	channel.exchange_declare(exchange='syncexchange', exchange_type='fanout')
