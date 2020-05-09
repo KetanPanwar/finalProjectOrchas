@@ -650,7 +650,7 @@ if m=='1':
 
 def change_behaviour():
 	global channel,connection
-	channel.close()
+	channel.stop_consuming()
 	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
 	channel=connection.channel()
 	channel.exchange_declare(exchange='syncexchange', exchange_type='fanout')
