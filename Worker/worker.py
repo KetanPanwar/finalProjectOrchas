@@ -633,8 +633,8 @@ if m=='1':
 	@zk.DataWatch("/worker/slave/"+slave_pid)
 	def slaveswatch(data,stat):
 		if data:
-			data1==data.decode()
-			if data1='changed':
+			data1=data.decode()
+			if data1=='changed':
 				print("And then the slave said : My watch begins :-)")
 				zk.delete("/worker/slave/"+slave_pid)
 				print("deleted kazoo node for slave")
