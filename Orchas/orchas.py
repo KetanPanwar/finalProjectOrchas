@@ -229,7 +229,7 @@ def read_numberof_containers():
 def masterswatch(data,stat):
 	if data:
 		data1=data.decode()
-		if data1='removed':
+		if data1=='removed':
 			print("And then the master said : My watch begins :-)")
 			global running_containers_info,master_info
 			zk.set("/worker/slave/"+str(running_containers_info[-1][0]), b"changed")
