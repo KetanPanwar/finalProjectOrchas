@@ -665,7 +665,7 @@ if m=='0':
 	usercol = mydb["users"]
 	ridecol = mydb["rides"]
 if m=='1':
-	mydb = myclient["RideShareSlave"]
+	mydb = myclient["RideShare"]
 	usercol = mydb["users"]
 	ridecol = mydb["rides"]
 
