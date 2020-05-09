@@ -573,6 +573,7 @@ def read_data():
 
 @app.route('/api/v1/db/clear', methods=['POST'])
 def clear_data():
+	print("eneterd clear")
 	write_rpc = forWrite()
 	try:
 		data = request.get_json()
@@ -588,8 +589,10 @@ def clear_data():
 	data3=data2
 	file1.write(data3)
 	file1.close() 
+	print("making call to writeq")
 	resp=write_rpc.call(data2)
 	m=json.loads(resp)
+	print("call was successful")
 	return jsonify(m['respo']),m['rcode']
 
 
