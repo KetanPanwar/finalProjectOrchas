@@ -454,7 +454,7 @@ def crash_master():
 	print("Killed Master")
 	zk.delete("worker/master/"+str(master_info[0]))
 	print("deleted kazoo node for master")
-	zk.set("/worker/master"+ b"removed")
+	zk.set("/worker/master", b"removed")
 	r=make_response(str(master_info[0]),200)
 	master_info=[]
 	return r
@@ -473,7 +473,7 @@ def crash_slave():
 	print("Killed Slave")
 	zk.delete("worker/slave/"+str(running_containers_info[-1][0]))
 	print("deleted kazoo node for slave")
-	zk.set("/worker/slave"+ b"removed")
+	zk.set("/worker/slave", b"removed")
 	r=make_response(str(running_containers_info[-1][0]),200)
 	running_containers_info.pop(-1)
 	return r
