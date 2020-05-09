@@ -31,7 +31,8 @@ app.config['JSON_SORT_KEYS'] = False
 # channel=0
 # def fn():
 # 	global connection,channel
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
+connection = pika.BlockingConnection(
+	pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='readnwrite', exchange_type='direct')
