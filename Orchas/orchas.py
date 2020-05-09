@@ -178,13 +178,13 @@ def startup():
 			master_info.append(container_pid)
 			master_info.append(container_id)
 			master_info.append(container_name)
-	zk.create("worker/master",("working"+str(container_pid)).encode(),makepath=True)
+	zk.create("worker/master",("working "+str(container_pid)).encode(),makepath=True)
 	print("master created",master_info)
 	global salveno,running_containers_info
 	salveno+=1
 	tem=client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
 	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
-	zk.create("worker/slave",("working"+str(getpid(tem.id))).encode(),makepath=True)
+	zk.create("worker/slave",("working "+str(getpid(tem.id))).encode(),makepath=True)
 	updateinfo()
 	print("slave created",running_containers_info)
 
