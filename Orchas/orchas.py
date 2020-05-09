@@ -237,7 +237,7 @@ def masterswatch(data,stat):
 			global running_containers_info,master_info,salveno
 			zk.set("/worker/slave/"+str(running_containers_info[-1][0]), b"changed")
 			csl=running_containers_info.pop(-1)
-			client.containers.get(csl[0]).rename('master')
+			client.containers.get(csl[2]).rename('master')
 			csl[-1]='master'
 			master_info.extend(csl)
 			salveno-=1
