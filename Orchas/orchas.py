@@ -18,22 +18,7 @@ from kazoo.client import KazooClient
 
 zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
-zk.ensure_path("/sample1")
 
-
-@zk.ChildrenWatch("/sample1")
-def start_zookeeping(children):
-    print("There are %s children with names %s" % (len(children), children))
-    flag = 1
-    for i in children:
-        data,stat = zk.get("sample1/"+i)
-        x = data.decode("utf-8")
-        #print("Child: %s  ---  Data: %s" % (i, data.decode("utf-8")))
-        if x=="master" :
-            print("{} is the master".format(i))
-            flag = 0
-    if flag and children:
-        zk.set("sample1/"+children[0],b'master')
 
 
 
@@ -167,6 +152,7 @@ def updateinfo():
 			# container_pid = int(container_pid) 
 			running_containers_info.append( [container_pid,str(container_id),str(container_name)])
 	running_containers_info.sort()
+	# running_containers_info.reverse()
 	print("rci",running_containers_info)
 
 
@@ -192,11 +178,13 @@ def startup():
 			master_info.append(container_pid)
 			master_info.append(container_id)
 			master_info.append(container_name)
+	zk.create("worker/master",("working"+str(container_pid)).encode(),makepath=True)
 	print("master created",master_info)
 	global salveno,running_containers_info
 	salveno+=1
-	client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
+	tem=client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
 	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
+	zk.create("worker/slave",("working"+str(getpid(tem.id))).encode(),makepath=True)
 	updateinfo()
 	print("slave created",running_containers_info)
 
@@ -210,11 +198,11 @@ def kill():
 def launch():
 	global salveno,client
 	salveno+=1
-	client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
+	tem=client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
 	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	print ("Succesfully launched a container")
 	updateinfo()
-	return
+	return getpid(tem.id)
 
 
 
@@ -237,6 +225,22 @@ def read_numberof_containers():
 	return len(running_containers_info)
 
 
+@zk.DataWatch("/worker/master")
+def masterswatch(data,stat):
+	if data:
+		data1=data.decode()
+		if data1='removed':
+			print("And then the master said : My watch begins :-)")
+			global running_containers_info,master_info
+			zk.set("/worker/slave/"+str(running_containers_info[-1][0]), b"changed")
+			csl=running_containers_info.pop(-1)
+			client.containers.get(csl[0]).rename('master')
+			csl[-1]='master'
+			master_info.extend(csl)
+			retu=launch()
+			print("called launch")
+			zk.set("/worker/slave",("working"+str(retu)).encode())
+			print("And master watch ends :-(")
 
 
 
@@ -443,15 +447,17 @@ flag=0
 @app.route('/api/v1/crash/master', methods=['POST'])
 def crash_master():
 	updateinfo()
-	cmkillmas="sudo docker stop"+" " +"master"
-	os.popen(cmkillmas)
-	cmkillmas="sudo docker rm"+" " +"master"
-	os.popen(cmkillmas)
-	global running_containers_info
-	cmkillmas="sudo docker rename "+running_containers_info[0][1]+" master"
-	os.popen(cmkillmas)
-	client.containers.get('master').stop()
-	return jsonify({}),200
+	global master_info
+	client.containers.get(master_info[-1]).stop()
+	# print(client.containers.get(running_containers_info[-1][-1]).logs())
+	client.containers.get(master_info[-1]).remove()
+	print("Killed Master")
+	zk.delete("worker/master"+str(master_info[0]))
+	print("deleted kazoo node for master")
+	zk.set("/worker/master"+ b"removed")
+	r=make_response(str(master_info[0]),200)
+	master_info=[]
+	return r
 	
 
 	
@@ -460,11 +466,17 @@ def crash_master():
 @app.route('/api/v1/crash/slave', methods=['POST'])
 def crash_slave():
 	updateinfo()
-	cmkillsal="sudo docker stop"+" " +"slave"
-	os.popen(cmkillsal)
-	cmkillsal="sudo docker rm"+" " +"salve"
-	os.popen(cmkillsal)
-	return jsonify({}),200
+	global running_containers_info
+	client.containers.get(running_containers_info[-1][-1]).stop()
+	# print(client.containers.get(running_containers_info[-1][-1]).logs())
+	client.containers.get(running_containers_info[-1][-1]).remove()
+	print("Killed Slave")
+	zk.delete("worker/slave"+str(running_containers_info[-1][0]))
+	print("deleted kazoo node for slave")
+	zk.set("/worker/slave"+ b"removed")
+	r=make_response(str(running_containers_info[-1][0]),200)
+	running_containers_info.pop(-1)
+	return r
 	
 
 

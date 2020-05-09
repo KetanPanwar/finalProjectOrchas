@@ -13,7 +13,7 @@ from kazoo.client import KazooClient
 
 zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
-zk.ensure_path("/sample1")
+# zk.ensure_path("/sample1")
 
 
 
@@ -27,29 +27,13 @@ print(sys.argv)
 
 myclient = pymongo.MongoClient("mongodb://0.0.0.0:27017/")
 
-if m=='0':
-	zk.create(path="/sample1/node",value=b'master',ephemeral=True, sequence=True)
-if m=='1':
-	zk.create(path="/sample1/node",value=b'salve',ephemeral=True, sequence=True)
 
-if m=='0':
-	mydb = myclient["RideShare"]
-	usercol = mydb["users"]
-	ridecol = mydb["rides"]
-if m=='1':
-	mydb = myclient["RideShareSlave"]
-	usercol = mydb["users"]
-	ridecol = mydb["rides"]
 
 
 connection = pika.BlockingConnection(
 	pika.ConnectionParameters(host='3.212.113.11'))
 channel = connection.channel()
 
-if m=='0':
-	result = channel.queue_declare(queue='rpc_queue_write',exclusive=True)
-if m=='1':
-	result = channel.queue_declare(queue='rpc_queue_read')
 
 
 
@@ -614,6 +598,10 @@ def callback_slave_data_up(data):
 			h=json.dumps(ret)
 		print("response sent")
 
+
+
+
+
 if m=='1':
 	resp_send = requests.post("http://52.72.92.96:80/api/v1/db/copydbtoslave", json={})
 	s = json.loads(resp_send.content)
@@ -629,6 +617,60 @@ if m=='1':
 		mio=json.loads(i)
 		print(mio,type(mio))
 		callback_slave_data_up(mio)
+
+
+if m=='0':
+	msg=zk.get("/worker/master")[0]
+	zk.set("/worker/master",b"")
+	master_pid=msg.decode().split()[1]
+	zk.create(path=("/worker/master/"+master_pid),value=b'working')
+if m=='1':
+	msg=zk.get("/worker/slave")[0]
+	zk.set("/worker/slave",b"")
+	slave_pid=msg.decode().split()[1]
+	zk.create(path=("/worker/slave/"+slave_pid),value=b'working')
+
+	@zk.DataWatch("/worker/slave/"+slave_pid)
+	def slaveswatch(data,stat):
+		if data:
+			data1=data.decode()
+			if data1='changed':
+				print("And then the slave said : My watch begins :-)")
+				zk.delete("/worker/slave/"+slave_pid)
+				print("deleted kazoo node for slave")
+				zk.create("/worker/master/"+slave_pid, b"working")
+				print("znode converted to master")
+
+
+def change_behaviour():
+	global channel,connection
+	channel.stop_consuming()
+	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11'))
+	channel=connection.channel()
+	channel.exchange_declare(exchange='syncexchange', exchange_type='fanout')
+	result1 = channel.queue_declare(queue='')
+	channel.queue_bind(exchange='syncexchange',
+				   queue=result1.method.queue)
+	result = channel.queue_declare(queue='rpc_queue_write',exclusive=True)
+	channel.basic_qos(prefetch_count=1)
+	channel.basic_consume(queue='rpc_queue_write', on_message_callback=callback_master)
+	print("behavious changed")
+	channel.start_consuming()
+
+
+if m=='0':
+	mydb = myclient["RideShare"]
+	usercol = mydb["users"]
+	ridecol = mydb["rides"]
+if m=='1':
+	mydb = myclient["RideShareSlave"]
+	usercol = mydb["users"]
+	ridecol = mydb["rides"]
+
+if m=='0':
+	result = channel.queue_declare(queue='rpc_queue_write',exclusive=True)
+if m=='1':
+	result = channel.queue_declare(queue='rpc_queue_read')
 
 
 
