@@ -19,6 +19,13 @@ from kazoo.client import KazooClient
 zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
 
+connection = pika.BlockingConnection(
+	pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
+channel = connection.channel()
+
+channel.exchange_declare(exchange='readnwrite', exchange_type='direct')
+result = channel.queue_declare(queue='rpc_queue_write')
+result = channel.queue_declare(queue='rpc_queue_read')
 
 
 
@@ -31,13 +38,7 @@ app.config['JSON_SORT_KEYS'] = False
 # channel=0
 # def fn():
 # 	global connection,channel
-connection = pika.BlockingConnection(
-	pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
-channel = connection.channel()
 
-channel.exchange_declare(exchange='readnwrite', exchange_type='direct')
-result = channel.queue_declare(queue='rpc_queue_write')
-result = channel.queue_declare(queue='rpc_queue_read')
 
 
 class forWrite(object):
