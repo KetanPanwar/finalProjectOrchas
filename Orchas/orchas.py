@@ -258,7 +258,7 @@ def start_zookeeping(children):
 	print(len(children), currreqslaves)
 	if(len(children) < currreqslaves and len(children) != 0):
 		print("A slave has died")
-		currreqslaves-=1
+		if currreqslaves!=0:currreqslaves-=1
 		launch()
 
 
@@ -508,7 +508,7 @@ def crash_master():
 @app.route('/api/v1/crash/slave', methods=['POST'])
 def crash_slave():
 	updateinfo()
-	global running_containers_info,salveno
+	global running_containers_info,salveno,currreqslaves
 	client.containers.get(running_containers_info[-1][-1]).stop()
 	# print(client.containers.get(running_containers_info[-1][-1]).logs())
 	client.containers.get(running_containers_info[-1][-1]).remove()
@@ -518,6 +518,8 @@ def crash_slave():
 	# zk.set("/worker/slave", b"removed")
 	resfi=[running_containers_info[-1][0]]
 	running_containers_info.pop(-1)
+	if currreqslaves==1:
+		currreqslaves=0
 	# salveno-=1
 	# launch()
 	# print("launch called")
