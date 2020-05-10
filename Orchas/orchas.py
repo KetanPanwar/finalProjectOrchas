@@ -25,7 +25,6 @@ channel = connection.channel()
 
 channel.exchange_declare(exchange='readnwrite', exchange_type='direct')
 result = channel.queue_declare(queue='rpc_queue_write')
-result = channel.queue_declare(queue='rpc_queue_read')
 
 
 
@@ -226,6 +225,9 @@ def stop():
 	# print(client.containers.get(running_containers_info[-1][-1]).logs())
 	client.containers.get(running_containers_info[-1][-1]).remove()
 	print ("Succesfully killed a container")
+	zk.delete("worker/slave/"+str(running_containers_info[-1][0]))
+	print("deleted kazoo node for slave")
+	zk.set("/worker/slave", b"removed")
 	updateinfo()
 	return
 
