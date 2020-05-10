@@ -629,13 +629,13 @@ if m=='0':
 	master_pid=msg.decode().split()[1]
 	zk.create(path=("/worker/master/"+master_pid),value=b'working')
 	zk.create(path="/allSlaves/node",value=b'master',ephemeral=True, sequence=True)
-if m=='1':
-	msg=zk.get("/worker/slave")[0]
-	print(msg)
-	zk.set("/worker/slave",b"")
-	slave_pid=msg.decode().split()[1]
-	zk.create(path=("/worker/slave/"+slave_pid),value=b'working')
-	zk.create(path="/allSlaves/node",value=b'slave',ephemeral=True, sequence=True)
+# if m=='1':
+# 	msg=zk.get("/worker/slave")[0]
+# 	print(msg)
+# 	zk.set("/worker/slave",b"")
+# 	slave_pid=msg.decode().split()[1]
+# 	zk.create(path=("/worker/slave/"+slave_pid),value=b'working')
+# 	zk.create(path="/allSlaves/node",value=b'slave',ephemeral=True, sequence=True)
 
 	# @zk.DataWatch("/worker/slave/"+slave_pid)
 	# def slaveswatch(data,stat):
