@@ -15,6 +15,7 @@ from threading import Timer
 import docker 
 import os
 from kazoo.client import KazooClient
+import time
 
 zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
@@ -209,6 +210,7 @@ def launch():
 	print ("Succesfully launched a container")
 	retu=getpid(tem.id)
 	zk.set("/worker/slave",("working "+str(retu)).encode())
+	time.sleep(1)
 	print("making a node")
 	updateinfo()
 	return getpid(tem.id)
