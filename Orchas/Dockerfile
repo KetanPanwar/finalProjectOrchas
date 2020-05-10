@@ -9,7 +9,8 @@ RUN apt-get update && \
     pip3 install pika && \
     pip3 install docker && \
     pip3 install Timer && \
-    pip3 install kazoo
+    pip3 install kazoo && \
+    pip3 install time
 
 ENV TEAM_NAME=CC_0195_0309
 
