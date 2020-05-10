@@ -645,7 +645,7 @@ if m=='1':
 				print("deleted kazoo node for slave")
 				zk.create("/worker/master/"+slave_pid, b"working")
 				print("znode converted to master")
-				channel.stop_consuming()
+				# channel.stop_consuming()
 				change_behaviour()
 
 
