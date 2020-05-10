@@ -256,11 +256,10 @@ def start_zookeeping(children):
 			print("{} is the master".format(i))
 			flag = 0
 	print(len(children)-1, currreqslaves)
-	while (len(children)-1 < currreqslaves and len(children) != 0):
-		if(len(children)-1 < currreqslaves and len(children) != 0):
-			print("A slave has died")
-			currreqslaves-=1
-			launch()
+	if(len(children)-1 < currreqslaves and len(children) != 0):
+		print("A slave has died")
+		currreqslaves-=1
+		launch()
 
 
 
