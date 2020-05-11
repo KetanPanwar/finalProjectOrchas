@@ -261,7 +261,7 @@ def start_zookeeping(children):
 			flag = 0
 	print(len(children)-1, currreqslaves)
 	if(len(children)-1 < currreqslaves and len(children) != 0):
-		print("A slave has died")
+		print("Launching another slave")
 		currreqslaves-=1
 		launch()
 
@@ -281,8 +281,6 @@ def masterswatch(data,stat):
 			client.containers.get(csl[2]).rename('master')
 			csl[-1]='master'
 			master_info.extend(csl)
-			client.containers.get('master').exec_run("pkill python", detach =True)
-			client.containers.get('master').exec_run("python3 worker.py 0", detach =True)
 			currreqslaves-=1
 			retu=launch()
 			print("called launch")
