@@ -19,7 +19,6 @@ import time
 
 zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
-zk.ensure_path("/allSlaves")
 
 connection = pika.BlockingConnection(
 	pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
@@ -119,8 +118,6 @@ class forRead(object):
 coureads=0
 coureadsprev=0
 salveno=0
-currreqslaves=1
-flagsalve=0
 running_containers_info=[]
 client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 master_info=[]
@@ -186,13 +183,13 @@ def startup():
 			master_info.append(container_name)
 	zk.create("worker/master",("working "+str(container_pid)).encode(),makepath=True)
 	print("master created",master_info)
-	# global salveno,running_containers_info
-	# salveno+=1
-	# tem=client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
-	# # client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
-	# # zk.create("worker/slave",("working "+str(getpid(tem.id))).encode(),makepath=True)
-	# updateinfo()
-	# print("slave created",running_containers_info)
+	global salveno,running_containers_info
+	salveno+=1
+	tem=client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
+	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
+	zk.create("worker/slave",("working "+str(getpid(tem.id))).encode(),makepath=True)
+	updateinfo()
+	print("slave created",running_containers_info)
 
 
 def kill():
@@ -206,17 +203,13 @@ def kill():
 
 
 def launch():
-	global salveno,client,currreqslaves,flagsalve
+	global salveno,client
 	salveno+=1
-	currreqslaves+=1
 	tem=client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
 	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	print ("Succesfully launched a container")
 	retu=getpid(tem.id)
-	if flagsalve==0: 
-		zk.create("worker/slave",("working "+str(retu)).encode(),makepath=True)
-		flagsalve=1
-	else:zk.set("/worker/slave",("working "+str(retu)).encode())
+	zk.set("/worker/slave",("working "+str(retu)).encode())
 	time.sleep(1)
 	print("making a node")
 	updateinfo()
@@ -228,9 +221,8 @@ def launch():
 
 def stop():
 	global running_containers_info
-	global salveno,client,currreqslaves
+	global salveno,client
 	salveno-=1
-	currreqslaves-=1
 	client.containers.get(running_containers_info[-1][-1]).stop()
 	# print(client.containers.get(running_containers_info[-1][-1]).logs())
 	client.containers.get(running_containers_info[-1][-1]).remove()
@@ -247,41 +239,19 @@ def read_numberof_containers():
 	return len(running_containers_info)
 
 
-@zk.ChildrenWatch("/allSlaves")
-def start_zookeeping(children):
-	print("There are %s children with names %s" % (len(children), children))
-	flag = 1
-	global currreqslaves
-	for i in children:
-		data,stat = zk.get("allSlaves/"+i)
-		x = data.decode("utf-8")
-		print("Child: %s  ---  Data: %s" % (i, data.decode("utf-8")))
-		if x=="master" :
-			print("{} is the master".format(i))
-			flag = 0
-	print(len(children)-1, currreqslaves)
-	if(len(children)-1 < currreqslaves and len(children) != 0):
-		print("Launching another slave")
-		currreqslaves-=1
-		launch()
-
-
-
-
-
 @zk.DataWatch("/worker/master")
 def masterswatch(data,stat):
 	if data:
 		data1=data.decode()
 		if data1=='removed':
 			print("And then the master said : My watch begins :-)")
-			global running_containers_info,master_info,salveno,currreqslaves
+			global running_containers_info,master_info,salveno
 			zk.set("/worker/slave/"+str(running_containers_info[-1][0]), b"changed")
 			csl=running_containers_info.pop(-1)
 			client.containers.get(csl[2]).rename('master')
 			csl[-1]='master'
 			master_info.extend(csl)
-			currreqslaves-=1
+			salveno-=1
 			retu=launch()
 			print("called launch")
 			print("And master watch ends :-(")
@@ -520,6 +490,9 @@ def crash_slave():
 	zk.set("/worker/slave", b"removed")
 	resfi=[running_containers_info[-1][0]]
 	running_containers_info.pop(-1)
+	salveno-=1
+	launch()
+	print("launch called")
 	return jsonify(resfi),200
 	
 

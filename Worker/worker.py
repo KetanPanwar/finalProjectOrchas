@@ -14,7 +14,7 @@ import threading
 
 zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
-zk.ensure_path("/allSlaves")
+# zk.ensure_path("/sample1")
 
 
 
@@ -628,14 +628,12 @@ if m=='0':
 	zk.set("/worker/master",b"")
 	master_pid=msg.decode().split()[1]
 	zk.create(path=("/worker/master/"+master_pid),value=b'working')
-	zk.create(path="/allSlaves/node",value=b'master',ephemeral=True, sequence=True)
 if m=='1':
 	msg=zk.get("/worker/slave")[0]
 	print(msg)
 	zk.set("/worker/slave",b"")
 	slave_pid=msg.decode().split()[1]
 	zk.create(path=("/worker/slave/"+slave_pid),value=b'working')
-	zk.create(path="/allSlaves/node",value=b'slave',ephemeral=True, sequence=True)
 
 	@zk.DataWatch("/worker/slave/"+slave_pid)
 	def slaveswatch(data,stat):
@@ -647,12 +645,14 @@ if m=='1':
 				print("deleted kazoo node for slave")
 				zk.create("/worker/master/"+slave_pid, b"working")
 				print("znode converted to master")
+				# channel.stop_consuming()
 				change_behaviour()
 
 
 def change_behaviour():
-	global channel,connection
-	channel.stop_consuming()
+	global channel,connection,t1
+	t1._stop()
+	# channel.stop_consuming()
 	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
 	channel=connection.channel()
 	channel.exchange_declare(exchange='syncexchange', exchange_type='fanout')
