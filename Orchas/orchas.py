@@ -247,19 +247,16 @@ def read_numberof_containers():
 
 @zk.ChildrenWatch("/allSlaves")
 def start_zookeeping(children):
-	print("There are %s children with names %s" % (len(children), children))
+	print("Number of branches: %s are: %s" % (len(children), children))
 	flag = 1
 	global currreqslaves
 	for i in children:
 		data,stat = zk.get("allSlaves/"+i)
 		x = data.decode("utf-8")
-		print("Child: %s  ---  Data: %s" % (i, data.decode("utf-8")))
 		if x=="master" :
-			print("{} is the master".format(i))
 			flag = 0
 	if flag==1 and len(children)!=0:
 		zk.set("allSlaves/"+children[0],b'master')
-	print(len(children)-1, currreqslaves)
 	if(len(children)-1 < currreqslaves and len(children) != 0):
 		print("Launching another slave")
 		currreqslaves-=1
