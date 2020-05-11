@@ -120,6 +120,7 @@ coureads=0
 coureadsprev=0
 salveno=0
 currreqslaves=1
+flagsalve=0
 running_containers_info=[]
 client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 master_info=[]
@@ -205,14 +206,17 @@ def kill():
 
 
 def launch():
-	global salveno,client,currreqslaves
+	global salveno,client,currreqslaves,flagsalve
 	salveno+=1
 	currreqslaves+=1
 	tem=client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 worker.py 1"], detach=True)
 	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	print ("Succesfully launched a container")
 	retu=getpid(tem.id)
-	zk.set("/worker/slave",("working "+str(retu)).encode())
+	if flagsalve==0: 
+		zk.create("worker/slave",("working "+str(retu)).encode(),makepath=True)
+		flagsalve=1
+	else:zk.set("/worker/slave",("working "+str(retu)).encode())
 	time.sleep(1)
 	print("making a node")
 	updateinfo()
