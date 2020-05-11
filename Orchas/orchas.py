@@ -246,7 +246,7 @@ def read_numberof_containers():
 
 
 @zk.ChildrenWatch("/allSlaves")
-def start_zookeeping(children):
+def watchforslaves(children):
 	print("Number of branches: %s are: %s" % (len(children), children))
 	flag = 1
 	global currreqslaves
