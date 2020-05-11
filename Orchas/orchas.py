@@ -589,6 +589,7 @@ def clear_data():
 		return jsonify({}), abort_code
 	# print(data)
 	# data['who']='rides'
+	if not data:data=["who":"users"]
 	data['method']='post'
 	data['op']='clear'
 	data2=json.dumps(data)
