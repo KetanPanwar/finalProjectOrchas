@@ -118,6 +118,7 @@ class forRead(object):
 
 coureads=0
 coureadsprev=0
+currreqslaves=1
 salveno=0
 running_containers_info=[]
 client = docker.DockerClient(base_url='unix://var/run/docker.sock')
@@ -198,14 +199,15 @@ def kill():
 	for i in running_containers:
 		container_id = i.id 
 		container_name = i.name
-		if container_name!='orchast':
+		if container_name!='orchast' and container_name!='zoo' and container_name!='rmq':
 			client.containers.get(container_id).stop()
 			client.containers.get(container_id).remove()
 
 
 def launch():
-	global salveno,client
+	global salveno,client,currreqslaves,flagsalve
 	salveno+=1
+	currreqslaves+=1
 	tem=client.containers.run("worker:latest", name='slave'+str(salveno),command=["sh","-c","service mongodb start; python3 cordinator.py 1"], detach=True)
 	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	print ("Succesfully launched a container")
@@ -222,8 +224,9 @@ def launch():
 
 def stop():
 	global running_containers_info
-	global salveno,client
+	global salveno,client,currreqslaves
 	salveno-=1
+	currreqslaves-=1
 	client.containers.get(running_containers_info[-1][-1]).stop()
 	# print(client.containers.get(running_containers_info[-1][-1]).logs())
 	client.containers.get(running_containers_info[-1][-1]).remove()
