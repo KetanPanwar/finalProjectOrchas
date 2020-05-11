@@ -630,42 +630,40 @@ if m=='0':
 	zk.create(path=("/worker/master/"+master_pid),value=b'working')
 	zk.create(path="/allSlaves/node",value=b'master',ephemeral=True, sequence=True)
 if m=='1':
-# 	msg=zk.get("/worker/slave")[0]
-# 	print(msg)
-# 	zk.set("/worker/slave",b"")
-# 	slave_pid=msg.decode().split()[1]
-# 	zk.create(path=("/worker/slave/"+slave_pid),value=b'working')
+	msg=zk.get("/worker/slave")[0]
+	print(msg)
+	zk.set("/worker/slave",b"")
+	slave_pid=msg.decode().split()[1]
+	zk.create(path=("/worker/slave/"+slave_pid),value=b'working')
 	zk.create(path="/allSlaves/node",value=b'slave',ephemeral=True, sequence=True)
 
-	# @zk.DataWatch("/worker/slave/"+slave_pid)
-	# def slaveswatch(data,stat):
-	# 	if data:
-	# 		data1=data.decode()
-	# 		if data1=='changed':
-	# 			print("And then the slave said : My watch begins :-)")
-	# 			zk.delete("/worker/slave/"+slave_pid)
-	# 			print("deleted kazoo node for slave")
-	# 			zk.create("/worker/master/"+slave_pid, b"working")
-	# 			print("znode converted to master")
-	# 			# channel.stop_consuming()
-	# 			change_behaviour()
+	@zk.DataWatch("/worker/slave/"+slave_pid)
+	def slaveswatch(data,stat):
+		if data:
+			data1=data.decode()
+			if data1=='changed':
+				print("And then the slave said : My watch begins :-)")
+				zk.delete("/worker/slave/"+slave_pid)
+				print("deleted kazoo node for slave")
+				zk.create("/worker/master/"+slave_pid, b"working")
+				print("znode converted to master")
+				change_behaviour()
 
 
-# def change_behaviour():
-# 	# global channel,connection,t1
-# 	# t1._stop()
-# 	# channel.stop_consuming()
-# 	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
-# 	channel=connection.channel()
-# 	channel.exchange_declare(exchange='syncexchange', exchange_type='fanout')
-# 	result1 = channel.queue_declare(queue='')
-# 	channel.queue_bind(exchange='syncexchange',
-# 				   queue=result1.method.queue)
-# 	result = channel.queue_declare(queue='rpc_queue_write')
-# 	channel.basic_qos(prefetch_count=1)
-# 	channel.basic_consume(queue='rpc_queue_write', on_message_callback=callback_master)
-# 	print("behavious changed")
-# 	channel.start_consuming()
+def change_behaviour():
+	global channel,connection
+	channel.stop_consuming()
+	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11',heartbeat=0))
+	channel=connection.channel()
+	channel.exchange_declare(exchange='syncexchange', exchange_type='fanout')
+	result1 = channel.queue_declare(queue='')
+	channel.queue_bind(exchange='syncexchange',
+				   queue=result1.method.queue)
+	result = channel.queue_declare(queue='rpc_queue_write')
+	channel.basic_qos(prefetch_count=1)
+	channel.basic_consume(queue='rpc_queue_write', on_message_callback=callback_master)
+	print("behavious changed")
+	channel.start_consuming()
 
 
 if m=='0':

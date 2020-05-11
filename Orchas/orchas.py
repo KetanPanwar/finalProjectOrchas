@@ -212,7 +212,7 @@ def launch():
 	# client.containers.get('slave'+str(salveno)).exec_run("python3 worker.py 1", detach=True)
 	print ("Succesfully launched a container")
 	retu=getpid(tem.id)
-	# zk.set("/worker/slave",("working "+str(retu)).encode())
+	zk.set("/worker/slave",("working "+str(retu)).encode())
 	time.sleep(1)
 	print("making a node")
 	updateinfo()
@@ -231,9 +231,9 @@ def stop():
 	# print(client.containers.get(running_containers_info[-1][-1]).logs())
 	client.containers.get(running_containers_info[-1][-1]).remove()
 	print ("Succesfully killed a container")
-	# zk.delete("worker/slave/"+str(running_containers_info[-1][0]))
+	zk.delete("worker/slave/"+str(running_containers_info[-1][0]))
 	print("deleted kazoo node for slave")
-	# zk.set("/worker/slave", b"removed")
+	zk.set("/worker/slave", b"removed")
 	updateinfo()
 	return
 
@@ -272,7 +272,7 @@ def masterswatch(data,stat):
 		if data1=='removed':
 			print("And then the master said : My watch begins :-)")
 			global running_containers_info,master_info,salveno,currreqslaves
-			# zk.set("/worker/slave/"+str(running_containers_info[-1][0]), b"changed")
+			zk.set("/worker/slave/"+str(running_containers_info[-1][0]), b"changed")
 			csl=running_containers_info.pop(-1)
 			client.containers.get(csl[2]).rename('master')
 			csl[-1]='master'
@@ -513,14 +513,11 @@ def crash_slave():
 	# print(client.containers.get(running_containers_info[-1][-1]).logs())
 	client.containers.get(running_containers_info[-1][-1]).remove()
 	print("Killed Slave")
-	# zk.delete("worker/slave/"+str(running_containers_info[-1][0]))
+	zk.delete("worker/slave/"+str(running_containers_info[-1][0]))
 	print("deleted kazoo node for slave")
-	# zk.set("/worker/slave", b"removed")
+	zk.set("/worker/slave", b"removed")
 	resfi=[running_containers_info[-1][0]]
 	running_containers_info.pop(-1)
-	# salveno-=1
-	# launch()
-	# print("launch called")
 	return jsonify(resfi),200
 	
 
