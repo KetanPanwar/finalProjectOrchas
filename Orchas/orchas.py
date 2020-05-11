@@ -257,6 +257,8 @@ def start_zookeeping(children):
 		if x=="master" :
 			print("{} is the master".format(i))
 			flag = 0
+	if flag==1:
+		zk.set("allSlaves/"+children[0],b'master')
 	print(len(children)-1, currreqslaves)
 	if(len(children)-1 < currreqslaves and len(children) != 0):
 		print("Launching another slave")
