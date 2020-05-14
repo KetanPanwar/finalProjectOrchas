@@ -1,14 +1,11 @@
-FROM python:3.7-slim-stretch
+FROM ubuntu:18.04
 
 RUN apt-get update && \
     apt-get install -y python3 && \
     apt-get install -y python3-pip && \
     pip3 install pandas && \
     pip3 install Flask-PyMongo==2.3.0 && \
-    pip3 install requests && \
-    pip3 install pika
-
-RUN apt install -y mongodb
+    pip3 install requests
 
 ENV TEAM_NAME=CC_0195_0309
 
@@ -16,6 +13,6 @@ WORKDIR /app
 
 COPY . /app
 
-EXPOSE 27017
+EXPOSE 5000
 
-CMD ["service","mongodb","start"]
+CMD ["python3","CC_0195_0309_users.py"]
