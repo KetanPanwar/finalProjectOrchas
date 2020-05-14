@@ -1,0 +1,35 @@
+version: "3"
+services:
+  rides:
+    container_name: rides
+    restart: always
+    image: rides:latest
+    ports:
+      - 8000:5050
+    env:
+      - TEAM_NAME=CC_0195_0309
+    links:
+      - users
+    depends_on:
+      - rides_db
+  users:
+    container_name: users
+    restart: always
+    image: users:latest
+    ports:
+      - 8080:5000
+    env:
+      - TEAM_NAME=CC_0195_0309
+    depends_on:
+      - user_db
+  user_db:
+    container_name: users_db
+    image: mongo
+    env:
+      - TEAM_NAME=CC_0195_0309
+
+  rides_db:
+    container_name: rides_db
+    image: mongo
+    env:
+      - TEAM_NAME=CC_0195_0309

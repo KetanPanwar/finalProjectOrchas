@@ -1,0 +1,17 @@
+version: "3"
+services:
+  users:
+    container_name: users
+    restart: always
+    image: users:latest
+    ports:
+      - 80:5000
+    environment:
+      - TEAM_NAME=CC_0195_0309
+    depends_on:
+      - user_db
+  user_db:
+    container_name: users_db
+    image: mongo
+    environment:
+      - TEAM_NAME=CC_0195_0309

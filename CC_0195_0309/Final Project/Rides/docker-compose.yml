@@ -1,0 +1,11 @@
+version: "3"
+services:
+  rides:
+    container_name: rides
+    restart: always
+    image: rides:latest
+    ports:
+      - 80:5050
+    environment:
+      - TEAM_NAME=CC_0195_0309
+    
