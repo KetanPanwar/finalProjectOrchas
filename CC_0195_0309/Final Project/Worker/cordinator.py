@@ -25,7 +25,7 @@ def passing(data):
 if(sys.argv[1] == "0"):
 	print("entered master")
 	path = zk.create(path="/allSlaves/node",value=b'master',ephemeral=True, sequence=True)
-	commandexe = "python3 -u worker.py 0"
+	commandexe = "python3 worker.py 0"
 	commandexe = commandexe.split(" ")
 	zk.get(path, watch=passing)
 	ty = subprocess.Popen(commandexe)
@@ -34,7 +34,7 @@ if(sys.argv[1] == "0"):
 else:
 	print("entered slave")
 	path = zk.create(path="/allSlaves/node",value=b'slave',ephemeral=True, sequence=True)
-	commandexe = "python3 -u worker.py 1"
+	commandexe = "python3 worker.py 1"
 	commandexe = commandexe.split(" ")
 	zk.get(path, watch=change_behaviour)
 	ty = subprocess.Popen(commandexe)

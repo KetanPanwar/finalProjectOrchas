@@ -161,6 +161,32 @@ def updateinfo():
 	print("rci",running_containers_info)
 
 
+def updateinfomaster():
+	global master_info,client
+	running_containers = client.containers.list() 
+	for i in running_containers:
+		container_id = i.id 
+		container_name = i.name
+		if container_name=='master' :
+			# cm="sudo docker inspect --format '{{.State.Pid}}'"+" " +str(container_id)[:12]
+			# print("cm",cm)
+			# stream = os.popen(cm) 
+			# container_pid = stream.read()
+			# container_pid=container_pid
+			container_pid=getpid(container_id)
+			print("yes")
+			# cm='GET /v1.24/containers/'+container_id+'/json?size=1 HTTP/1.1'
+			# resp_send = requests.get(
+			# 	cm, )
+			# d = json.loads(resp_send.content)
+			# d=json.loads(d)
+			print("cid",container_pid)
+			# container_pid = int(container_pid) 
+			master_info= [container_pid,str(container_id),str(container_name)].copy()
+			break
+	# running_containers_info.reverse()
+
+
 
 def startup():
 	global master_info,salveno
@@ -257,6 +283,10 @@ def watchforslaves(children):
 			flag = 0
 	if flag==1 and len(children)!=0:
 		zk.set("allSlaves/"+children[0],b'master')
+		client.containers.get(running_containers_info[0][-1]).rename('master')
+		updateinfomaster()
+		updateinfo()
+	print(len(children)-1 , currreqslaves)
 	if(len(children)-1 < currreqslaves and len(children) != 0):
 		print("Launching another slave")
 		currreqslaves-=1
@@ -526,7 +556,8 @@ def crash_slave():
 def list_worker():
 	updateinfo()
 	global running_containers_info
-	resf=[master_info[0]]
+	if master_info:resf=[master_info[0]]
+	else:resf=[]
 	for i in running_containers_info:
 		resf.append(i[0])
 	resf.sort()

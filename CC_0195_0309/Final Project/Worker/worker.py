@@ -12,7 +12,7 @@ import csv
 from kazoo.client import KazooClient
 import threading 
 
-#zk = KazooClient(hosts='zoo:2181')
+#zk = KazooClient(hosts='3.212.113.11:2181')
 #zk.start()
 # #zk.ensure_path("/sample1")
 
@@ -653,7 +653,7 @@ if m=='1':
 # 	global channel,connection,t1
 # 	t1._stop()
 # 	# channel.stop_consuming()
-# 	connection = pika.BlockingConnection(pika.ConnectionParameters(host='rmq'))
+# 	connection = pika.BlockingConnection(pika.ConnectionParameters(host='3.212.113.11'))
 # 	channel=connection.channel()
 # 	channel.exchange_declare(exchange='syncexchange', exchange_type='fanout')
 # 	result1 = channel.queue_declare(queue='')
