@@ -3,7 +3,7 @@ import subprocess
 import time
 import pika
 from kazoo.client import KazooClient
-zk = KazooClient(hosts='zoo:2181')
+zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
 zk.ensure_path("/allSlaves")
 global ty

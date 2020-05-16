@@ -17,12 +17,12 @@ import os
 from kazoo.client import KazooClient
 import time
 
-zk = KazooClient(hosts='zoo:2181')
+zk = KazooClient(hosts='3.212.113.11:2181')
 zk.start()
 zk.ensure_path("/allSlaves")
 
 connection = pika.BlockingConnection(
-	pika.ConnectionParameters(host='rmq'))
+	pika.ConnectionParameters(host='3.212.113.11'))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='readnwrite', exchange_type='direct')
@@ -46,7 +46,7 @@ class forWrite(object):
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='rmq'))
+			pika.ConnectionParameters(host='3.212.113.11'))
 
 		self.channel = self.connection.channel()
 
@@ -84,7 +84,7 @@ class forRead(object):
 
 	def __init__(self):
 		self.connection = pika.BlockingConnection(
-			pika.ConnectionParameters(host='rmq'))
+			pika.ConnectionParameters(host='3.212.113.11'))
 
 		self.channel = self.connection.channel()
 
@@ -199,7 +199,7 @@ def kill():
 	for i in running_containers:
 		container_id = i.id 
 		container_name = i.name
-		if container_name!='orchast' and container_name!='rmq':
+		if container_name!='orchast' and container_name!='zoo' and container_name!='rmq':
 			client.containers.get(container_id).stop()
 			client.containers.get(container_id).remove()
 
