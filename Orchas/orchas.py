@@ -257,6 +257,7 @@ def watchforslaves(children):
 			flag = 0
 	if flag==1 and len(children)!=0:
 		zk.set("allSlaves/"+children[0],b'master')
+	print(len(children)-1 , currreqslaves)
 	if(len(children)-1 < currreqslaves and len(children) != 0):
 		print("Launching another slave")
 		currreqslaves-=1
@@ -526,7 +527,8 @@ def crash_slave():
 def list_worker():
 	updateinfo()
 	global running_containers_info
-	resf=[master_info[0]]
+	if master_info:resf=[master_info[0]]
+	else:resf=[]
 	for i in running_containers_info:
 		resf.append(i[0])
 	resf.sort()
